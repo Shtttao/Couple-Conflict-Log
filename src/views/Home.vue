@@ -75,25 +75,34 @@ onMounted(reload)
 
     <main class="home-main">
       <section class="hero-panel">
-        <CoupleAvatar variant="together" size="medium" />
+        <span class="hero-doodle hero-doodle-1">♡</span>
+        <span class="hero-doodle hero-doodle-2">✿</span>
+        <span class="hero-doodle hero-doodle-3">☆</span>
+        <span class="hero-doodle hero-doodle-4">~</span>
+        <span class="hero-doodle hero-doodle-5">♡</span>
+
+        <div class="hero-avatar-wrap">
+          <CoupleAvatar variant="together" size="big" />
+        </div>
+
         <div class="hero-text">
-          <h2>Hi, {{ state.user.displayName }} ♡</h2>
+          <h2>Hi, {{ state.user.displayName }} <span class="wave">♡</span></h2>
           <p>
             A soft little place to record disagreements together.
             You write only your own side, and your partner writes theirs.
             Hearts grow when we listen.
           </p>
           <div class="hero-stats">
-            <div class="stat">
+            <div class="stat stat-pink">
               <span class="stat-num">{{ stats.total }}</span>
               <span class="stat-label">Memories</span>
             </div>
-            <div class="stat">
-              <span class="stat-num stat-peach">{{ stats.open }}</span>
+            <div class="stat stat-peach">
+              <span class="stat-num">{{ stats.open }}</span>
               <span class="stat-label">Still to hug</span>
             </div>
-            <div class="stat">
-              <span class="stat-num stat-mint">{{ stats.resolved }}</span>
+            <div class="stat stat-mint">
+              <span class="stat-num">{{ stats.resolved }}</span>
               <span class="stat-label">Reconciled</span>
             </div>
           </div>
@@ -178,26 +187,76 @@ onMounted(reload)
 }
 
 .hero-panel {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 22px;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 26px;
-  box-shadow: 0 18px 40px rgba(255, 182, 193, 0.18);
-  margin-bottom: 18px;
+  gap: 20px;
+  padding: 28px 24px;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(255, 200, 220, 0.4), transparent 60%),
+    radial-gradient(ellipse at 80% 70%, rgba(170, 200, 255, 0.35), transparent 60%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 245, 250, 0.9));
+  border-radius: 32px;
+  box-shadow:
+    0 20px 50px rgba(255, 150, 180, 0.22),
+    0 4px 10px rgba(200, 200, 255, 0.15) inset;
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* decorative doodles around the hero */
+.hero-doodle {
+  position: absolute;
+  font-size: 1.8rem;
+  opacity: 0.5;
+  pointer-events: none;
+  animation: hero-float 5s ease-in-out infinite;
+  font-weight: 300;
+}
+.hero-doodle-1 { top: 10%; right: 8%; color: #ff9cb5; font-size: 1.6rem; animation-delay: 0s; }
+.hero-doodle-2 { top: 18%; left: 6%; color: #b7a8ff; font-size: 1.4rem; animation-delay: 1s; }
+.hero-doodle-3 { bottom: 18%; right: 12%; color: #ffc08a; font-size: 1.3rem; animation-delay: 2s; }
+.hero-doodle-4 { bottom: 10%; left: 10%; color: #98bdff; font-size: 2rem; animation-delay: 0.5s; font-weight: 200; }
+.hero-doodle-5 { top: 50%; right: 20%; color: #ffb8cb; font-size: 1rem; animation-delay: 3s; }
+
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0) rotate(-8deg); opacity: 0.35; }
+  50% { transform: translateY(-10px) rotate(10deg); opacity: 0.7; }
+}
+
+.hero-avatar-wrap {
+  flex-shrink: 0;
+  filter: drop-shadow(0 8px 20px rgba(255, 150, 180, 0.25));
 }
 
 .hero-text h2 {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   color: var(--cocoa);
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.wave {
+  display: inline-block;
+  animation: wave 2s ease-in-out infinite;
+  transform-origin: 70% 70%;
+  color: var(--pink-strong);
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(18deg); }
+  40% { transform: rotate(-10deg); }
+  60% { transform: rotate(18deg); }
+  80% { transform: rotate(-5deg); }
 }
 
 .hero-text p {
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   color: #8a7b90;
   font-size: 0.95rem;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .hero-stats {
@@ -207,28 +266,37 @@ onMounted(reload)
 }
 
 .stat {
-  flex: 1 1 110px;
-  background: linear-gradient(135deg, #fff0f6, #eef3ff);
-  border-radius: 16px;
-  padding: 10px 12px;
+  flex: 1 1 100px;
+  border-radius: 18px;
+  padding: 14px 10px 12px;
   text-align: center;
+  position: relative;
+  box-shadow: 0 6px 16px rgba(180, 150, 200, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
+.stat:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(180, 150, 200, 0.25); }
+
+.stat-pink { background: linear-gradient(135deg, #fff0f6, #ffd8e4); }
+.stat-peach { background: linear-gradient(135deg, #fff3e8, #ffe0c8); }
+.stat-mint { background: linear-gradient(135deg, #e8fff5, #c8f5e5); }
 
 .stat-num {
   display: block;
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: 700;
-  color: var(--pink-strong);
+  color: #6b4a6b;
+  line-height: 1.1;
 }
-
-.stat-peach { color: #ef8b6a; }
-.stat-mint { color: #4fb19a; }
+.stat-peach .stat-num { color: #a6553a; }
+.stat-mint .stat-num { color: #2f8a70; }
 
 .stat-label {
   display: block;
-  font-size: 0.78rem;
-  color: #8a7b90;
-  margin-top: 2px;
+  font-size: 0.8rem;
+  color: #7a6a82;
+  margin-top: 4px;
+  font-weight: 500;
 }
 
 .toolbar {
@@ -304,14 +372,23 @@ onMounted(reload)
   .hero-panel {
     flex-direction: column;
     text-align: center;
-    padding: 18px 16px;
+    padding: 24px 18px 22px;
+    gap: 14px;
   }
+  .hero-avatar-wrap { transform: scale(0.85); margin: -8px 0; }
+  .hero-text h2 { font-size: 1.5rem; }
   .hero-text p { font-size: 0.9rem; }
   .toolbar { justify-content: center; }
+  .hero-doodle-1 { right: 6%; top: 6%; font-size: 1.3rem; }
+  .hero-doodle-2 { left: 4%; font-size: 1.1rem; }
+  .hero-doodle-5 { display: none; }
 }
 
 @media (max-width: 480px) {
   .home-main { padding: 12px 12px 24px; }
-  .stat { flex: 1 1 30%; }
+  .stat { flex: 1 1 30%; padding: 12px 6px 10px; }
+  .stat-num { font-size: 1.4rem; }
+  .stat-label { font-size: 0.72rem; }
+  .hero-avatar-wrap { transform: scale(0.75); margin: -12px 0; }
 }
 </style>
