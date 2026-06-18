@@ -1,7 +1,48 @@
 <script setup>
-defineProps({
+import { computed, ref } from 'vue'
+import { useAvatarStore } from '../utils/avatarStore.js'
+
+const props = defineProps({
   variant: { type: String, default: 'together' }, // together / bear / bunny
   size: { type: String, default: 'medium' } // small / medium / big
+})
+
+const avatarStore = useAvatarStore()
+
+const boyAvatar = computed(() => avatarStore.getAvatar('boy'))
+const girlAvatar = computed(() => avatarStore.getAvatar('girl'))
+
+// 上传功能（可选 — 通过 ref 从父组件调用）
+const boyInput = ref(null)
+const girlInput = ref(null)
+const uploading = ref(false)
+
+async function onPick (role, event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  uploading.value = true
+  try {
+    await avatarStore.setAvatarFromFile(role, file)
+  } finally {
+    uploading.value = false
+    event.target.value = ''
+  }
+}
+
+function reset (role) {
+  if (confirm('确定恢复默认头像吗？')) {
+    avatarStore.resetAvatar(role)
+  }
+}
+
+// 暴露操作方法，便于父组件直接调用
+defineExpose({
+  pickBoy: () => boyInput.value?.click(),
+  pickGirl: () => girlInput.value?.click(),
+  resetBoy: () => reset('boy'),
+  resetGirl: () => reset('girl'),
+  hasBoy: () => avatarStore.hasCustom('boy'),
+  hasGirl: () => avatarStore.hasCustom('girl')
 })
 </script>
 
@@ -10,30 +51,46 @@ defineProps({
     <!-- 双人模式：并排显示 -->
     <div v-if="variant === 'together'" class="avatar-wrap together-wrap">
       <div class="photo-circle photo-boy">
-        <img src="/images/couple-boy.png" alt="小熊头像" class="avatar-img" />
+        <img :src="boyAvatar" alt="小熊头像" class="avatar-img" />
       </div>
       <div class="heart-connector">♡</div>
       <div class="photo-circle photo-girl">
-        <img src="/images/couple-girl.png" alt="小兔头像" class="avatar-img" />
+        <img :src="girlAvatar" alt="小兔头像" class="avatar-img" />
       </div>
     </div>
 
     <!-- 单人：小熊（男生） -->
     <div v-else-if="variant === 'bear'" class="avatar-wrap single-wrap">
       <div class="photo-circle photo-boy big-circle">
-        <img src="/images/couple-boy.png" alt="小熊头像" class="avatar-img" />
+        <img :src="boyAvatar" alt="小熊头像" class="avatar-img" />
       </div>
     </div>
 
     <!-- 单人：小兔（女生） -->
     <div v-else-if="variant === 'bunny'" class="avatar-wrap single-wrap">
       <div class="photo-circle photo-girl big-circle">
-        <img src="/images/couple-girl.png" alt="小兔头像" class="avatar-img" />
+        <img :src="girlAvatar" alt="小兔头像" class="avatar-img" />
       </div>
     </div>
 
     <span class="floaty">✿</span>
     <span class="floaty small">☆</span>
+
+    <!-- 隐藏文件输入框，由外部触发 -->
+    <input
+      ref="boyInput"
+      type="file"
+      accept="image/png,image/jpeg,image/webp"
+      style="display:none"
+      @change="onPick('boy', $event)"
+    />
+    <input
+      ref="girlInput"
+      type="file"
+      accept="image/png,image/jpeg,image/webp"
+      style="display:none"
+      @change="onPick('girl', $event)"
+    />
   </div>
 </template>
 

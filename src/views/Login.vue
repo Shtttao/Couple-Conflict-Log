@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { login } from '../utils/auth.js'
 import CoupleAvatar from '../components/CoupleAvatar.vue'
+import { useAvatarStore } from '../utils/avatarStore.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -10,6 +11,10 @@ const username = ref('')
 const password = ref('')
 const shake = ref(false)
 const error = ref('')
+
+const avatarStore = useAvatarStore()
+const avatarRef = ref(null)
+const hasCustom = computed(() => avatarStore.state.boy || avatarStore.state.girl)
 
 function onSubmit () {
   error.value = ''
@@ -34,15 +39,39 @@ function quickFill (who) {
   }
   onSubmit()
 }
+
+function pickBoyAvatar () {
+  avatarRef.value?.pickBoy?.()
+}
+function pickGirlAvatar () {
+  avatarRef.value?.pickGirl?.()
+}
+function resetAllAvatars () {
+  if (confirm('确定恢复两个默认头像吗？')) {
+    avatarStore.resetAll()
+  }
+}
 </script>
 
 <template>
   <div class="login-wrap">
     <div class="login-card" :class="{ shake }">
       <div class="login-hero">
-        <CoupleAvatar variant="together" size="big" />
+        <CoupleAvatar ref="avatarRef" variant="together" size="big" />
         <h1 class="login-title">情侣吵架日记</h1>
         <p class="login-sub">两颗心一起反思的温暖小角落 ♡</p>
+
+        <div class="avatar-edit-row">
+          <button type="button" class="mini-btn" @click="pickBoyAvatar">
+            📷 换男生的头像
+          </button>
+          <button type="button" class="mini-btn" @click="pickGirlAvatar">
+            📷 换女生的头像
+          </button>
+          <button v-if="hasCustom" type="button" class="mini-btn mini-ghost" @click="resetAllAvatars">
+            ↺ 恢复默认
+          </button>
+        </div>
       </div>
 
       <form class="login-form" @submit.prevent="onSubmit">
@@ -215,6 +244,44 @@ function quickFill (who) {
   color: #8a7b90;
   font-size: 0.75rem;
   margin-top: 2px;
+}
+
+/* 头像自定义行 */
+.avatar-edit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.mini-btn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fff0f6, #eef3ff);
+  color: #7a6a90;
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s, background 0.2s;
+  min-height: 34px;
+}
+
+.mini-btn:hover {
+  background: linear-gradient(135deg, #ffe1ec, #dfe7ff);
+  transform: translateY(-1px);
+}
+
+.mini-btn:active {
+  transform: scale(0.96);
+}
+
+.mini-btn.mini-ghost {
+  background: #fff;
+  color: #8a7b90;
+  box-shadow: inset 0 0 0 1px #e8daea;
 }
 
 .privacy-note {

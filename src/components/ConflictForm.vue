@@ -2,6 +2,11 @@
 import { ref, computed } from 'vue'
 import TagInput from './TagInput.vue'
 import MoodStars from './MoodStars.vue'
+import { useAvatarStore } from '../utils/avatarStore.js'
+
+const avatarStore = useAvatarStore()
+const boyAvatar = computed(() => avatarStore.getAvatar('boy'))
+const girlAvatar = computed(() => avatarStore.getAvatar('girl'))
 
 const props = defineProps({
   user: { type: Object, required: true }
@@ -58,7 +63,7 @@ function submit () {
       <section class="panel panel-sky">
         <header class="panel-head">
           <span class="avatar-img bear">
-            <img src="/images/couple-boy.png" alt="小熊" />
+            <img :src="boyAvatar" alt="小熊" />
           </span>
           <h4>小熊</h4>
           <span v-if="!isMe" class="lock-tag">🔒 对方区域</span>
@@ -82,7 +87,7 @@ function submit () {
       <section class="panel panel-pink">
         <header class="panel-head">
           <span class="avatar-img bunny">
-            <img src="/images/couple-girl.png" alt="小兔" />
+            <img :src="girlAvatar" alt="小兔" />
           </span>
           <h4>小兔</h4>
           <span v-if="isMe" class="lock-tag">🔒 对方区域</span>
