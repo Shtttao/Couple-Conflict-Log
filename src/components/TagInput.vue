@@ -7,7 +7,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['update:modelValue'])
 
-const input = ref('')
+const text = ref('')
 
 const tags = ref([...(props.modelValue || [])])
 
@@ -16,15 +16,15 @@ watch(() => props.modelValue, (next) => {
 })
 
 function addTag () {
-  const t = input.value.trim().replace(/^#/, '')
+  const t = text.value.trim().replace(/^#/, '')
   if (!t) return
   if (tags.value.includes(t)) {
-    input.value = ''
+    text.value = ''
     return
   }
   if (tags.value.length >= 8) return
   tags.value.push(t)
-  input.value = ''
+  text.value = ''
   sync()
 }
 
@@ -37,7 +37,7 @@ function onKey (e) {
   if (e.key === 'Enter' || e.key === ',') {
     e.preventDefault()
     addTag()
-  } else if (e.key === 'Backspace' && !input.value && tags.value.length) {
+  } else if (e.key === 'Backspace' && !text.value && tags.value.length) {
     tags.value.pop()
     sync()
   }
@@ -55,8 +55,7 @@ function sync () {
       <button type="button" class="chip-remove" @click="removeTag(tag)">×</button>
     </span>
     <input
-      ref="input"
-      v-model="input"
+      v-model="text"
       type="text"
       :placeholder="tags.length ? '' : placeholder"
       @keydown="onKey"
