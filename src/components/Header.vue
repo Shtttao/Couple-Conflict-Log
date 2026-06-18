@@ -19,12 +19,12 @@ function onLogout () {
   <header class="app-header">
     <div class="logo">
       <span class="logo-bubble">♡</span>
-      <span class="logo-text">Couple Conflict Log</span>
+      <span class="logo-text">情侣吵架日记</span>
     </div>
     <div class="user-chip" :class="'chip-' + user.color">
       <span class="chip-avatar">{{ user.role === 'me' ? '🐻' : '🐰' }}</span>
       <span class="chip-name">{{ user.displayName }}</span>
-      <button class="chip-logout" @click="onLogout" title="Log out">✕</button>
+      <button class="chip-logout" @click="onLogout" title="退出登录">✕</button>
     </div>
   </header>
 </template>

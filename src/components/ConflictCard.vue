@@ -71,7 +71,7 @@ function formattedDate (iso) {
           :class="['resolve-btn', conflict.resolved ? 'resolved' : '']"
           @click="toggleResolved"
         >
-          {{ conflict.resolved ? '💗 Reconciled' : '✓ Mark as Reconciled' }}
+          {{ conflict.resolved ? '💗 已和解' : '✓ 标记为和解' }}
         </button>
       </div>
     </div>
@@ -80,20 +80,20 @@ function formattedDate (iso) {
       <section class="panel panel-sky">
         <header class="panel-head">
           <span class="avatar">🐻</span>
-          <h4>Little Bear</h4>
-          <span v-if="!isMe && !editing" class="lock-tag small">Partner only</span>
+          <h4>小熊</h4>
+          <span v-if="!isMe && !editing" class="lock-tag small">对方的</span>
         </header>
         <textarea
           v-if="editing && isMe"
           v-model="myText"
           rows="6"
-          placeholder="Your reflection…"
+          placeholder="写下你的反思…"
         ></textarea>
         <p v-else class="panel-text">
-          {{ conflict.myReflection || 'Not yet written.' }}
+          {{ conflict.myReflection || '还没有写下。' }}
         </p>
         <div class="mood-row">
-          <span class="mood-label">Mood:</span>
+          <span class="mood-label">心情：</span>
           <MoodStars
             v-if="editing && isMe"
             v-model="myMood"
@@ -112,20 +112,20 @@ function formattedDate (iso) {
       <section class="panel panel-pink">
         <header class="panel-head">
           <span class="avatar">🐰</span>
-          <h4>Sweet Bunny</h4>
-          <span v-if="isMe && !editing" class="lock-tag small">Partner only</span>
+          <h4>小兔</h4>
+          <span v-if="isMe && !editing" class="lock-tag small">对方的</span>
         </header>
         <textarea
           v-if="editing && !isMe"
           v-model="partnerText"
           rows="6"
-          placeholder="Your reflection…"
+          placeholder="写下你的反思…"
         ></textarea>
         <p v-else class="panel-text">
-          {{ conflict.partnerReflection || 'Not yet written.' }}
+          {{ conflict.partnerReflection || '还没有写下。' }}
         </p>
         <div class="mood-row">
-          <span class="mood-label">Mood:</span>
+          <span class="mood-label">心情：</span>
           <MoodStars
             v-if="editing && !isMe"
             v-model="partnerMood"
@@ -144,14 +144,14 @@ function formattedDate (iso) {
 
     <div class="card-actions">
       <button class="btn btn-ghost btn-danger btn-small" @click="emit('delete', conflict.id)">
-        🗑 Delete
+        🗑 删除
       </button>
       <button v-if="!editing" class="btn btn-secondary btn-small" @click="toggleEdit">
-        ✎ Edit my side
+        ✎ 编辑我的部分
       </button>
       <template v-else>
-        <button class="btn btn-ghost btn-small" @click="toggleEdit">Cancel</button>
-        <button class="btn btn-primary btn-small" @click="save">Save my changes ♡</button>
+        <button class="btn btn-ghost btn-small" @click="toggleEdit">取消</button>
+        <button class="btn btn-primary btn-small" @click="save">保存我的修改 ♡</button>
       </template>
     </div>
   </article>

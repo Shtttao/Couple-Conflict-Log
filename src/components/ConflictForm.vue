@@ -19,7 +19,7 @@ const isMe = computed(() => props.user?.role === 'me')
 
 function submit () {
   if (!date.value) {
-    alert('Please pick a date for this memory ♡')
+    alert('请为这段回忆选择一个日期 ♡')
     return
   }
   emit('created', {
@@ -35,16 +35,16 @@ function submit () {
 
 <template>
   <form class="conflict-form" @submit.prevent="submit">
-    <h3 class="form-title">✎ New Conflict Memory</h3>
+    <h3 class="form-title">✎ 新的吵架回忆</h3>
 
     <div class="row row-top">
       <label class="field field-date">
-        <span>Date</span>
+        <span>日期</span>
         <input v-model="date" type="date" />
       </label>
       <div class="field field-tags">
-        <span>Tags (e.g. Money, Family, Habits…)</span>
-        <TagInput v-model="tags" placeholder="Type and press Enter…" />
+        <span>标签（如：金钱、家庭、习惯…）</span>
+        <TagInput v-model="tags" placeholder="输入后按回车添加…" />
       </div>
     </div>
 
@@ -52,17 +52,17 @@ function submit () {
       <section class="panel panel-sky">
         <header class="panel-head">
           <span class="avatar">🐻</span>
-          <h4>Little Bear</h4>
-          <span v-if="!isMe" class="lock-tag">Locked for partner only</span>
+          <h4>小熊</h4>
+          <span v-if="!isMe" class="lock-tag">仅对方可编辑</span>
         </header>
         <textarea
           v-model="myReflection"
           :disabled="!isMe"
-          :placeholder="isMe ? 'Write down your feelings, what hurt you, what you wish…' : 'This side belongs to your partner — edit your own panel instead.'"
+          :placeholder="isMe ? '写下你的感受，什么伤害了你，你希望什么…' : '这是对方的区域 — 请编辑你自己的板块。'"
           rows="7"
         ></textarea>
         <div class="mood-row">
-          <span class="mood-label">Mood after reflecting:</span>
+          <span class="mood-label">反思后的心情：</span>
           <MoodStars
             v-model="myMood"
             :read-only="!isMe"
@@ -74,17 +74,17 @@ function submit () {
       <section class="panel panel-pink">
         <header class="panel-head">
           <span class="avatar">🐰</span>
-          <h4>Sweet Bunny</h4>
-          <span v-if="isMe" class="lock-tag">Locked for partner only</span>
+          <h4>小兔</h4>
+          <span v-if="isMe" class="lock-tag">仅对方可编辑</span>
         </header>
         <textarea
           v-model="partnerReflection"
           :disabled="isMe"
-          :placeholder="!isMe ? 'Write down your feelings, what hurt you, what you wish…' : 'This side belongs to your partner — edit your own panel instead.'"
+          :placeholder="!isMe ? '写下你的感受，什么伤害了你，你希望什么…' : '这是对方的区域 — 请编辑你自己的板块。'"
           rows="7"
         ></textarea>
         <div class="mood-row">
-          <span class="mood-label">Mood after reflecting:</span>
+          <span class="mood-label">反思后的心情：</span>
           <MoodStars
             v-model="partnerMood"
             :read-only="isMe"
@@ -95,8 +95,8 @@ function submit () {
     </div>
 
     <div class="actions">
-      <button type="button" class="btn btn-ghost" @click="emit('cancel')">Cancel</button>
-      <button type="submit" class="btn btn-primary">Save this memory ♡</button>
+      <button type="button" class="btn btn-ghost" @click="emit('cancel')">取消</button>
+      <button type="submit" class="btn btn-primary">保存这段回忆 ♡</button>
     </div>
   </form>
 </template>

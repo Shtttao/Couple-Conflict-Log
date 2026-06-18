@@ -325,9 +325,9 @@ defineProps({
 <style scoped>
 .couple-avatar {
   display: inline-flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  gap: 0px;
+  gap: 12px;
   position: relative;
 }
 
@@ -340,17 +340,8 @@ defineProps({
 .couple-avatar.big .avatar { width: 170px; height: 210px; }
 .couple-avatar.small .avatar { width: 84px; height: 102px; }
 
-/* overlap them slightly like a couple photo */
-.couple-avatar.together .avatar.bear { transform: translateY(-6px) rotate(-1deg); z-index: 1; }
-.couple-avatar.together .avatar.bunny { transform: translateY(2px) translateX(-20px) rotate(1.5deg); z-index: 2; }
-
-/* subtle breathing animation */
-@keyframes breathe {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
-}
-.avatar.bear { animation: breathe 4s ease-in-out infinite; }
-.avatar.bunny { animation: breathe 4.5s ease-in-out infinite; animation-delay: 1s; }
+.couple-avatar.together .avatar.bear { z-index: 1; }
+.couple-avatar.together .avatar.bunny { z-index: 2; }
 
 .floaty {
   position: absolute;

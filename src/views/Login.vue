@@ -13,8 +13,8 @@ const error = ref('')
 
 const hint = computed(() => {
   return [
-    'Pre-set account ① — username: loverA, password: together4ever',
-    'Pre-set account ② — username: loverB, password: myheartforyou'
+    '预设账号 ① — 用户名: loverA, 密码: together4ever',
+    '预设账号 ② — 用户名: loverB, 密码: myheartforyou'
   ]
 })
 
@@ -48,13 +48,13 @@ function quickFill (who) {
     <div class="login-card" :class="{ shake }">
       <div class="login-hero">
         <CoupleAvatar variant="together" size="big" />
-        <h1 class="login-title">Couple Conflict Log</h1>
-        <p class="login-sub">A warm little place for two hearts to reflect together ♡</p>
+        <h1 class="login-title">情侣吵架日记</h1>
+        <p class="login-sub">两颗心一起反思的温暖小角落 ♡</p>
       </div>
 
       <form class="login-form" @submit.prevent="onSubmit">
         <label class="field">
-          <span>Username</span>
+          <span>用户名</span>
           <input
             v-model.trim="username"
             type="text"
@@ -63,36 +63,36 @@ function quickFill (who) {
           />
         </label>
         <label class="field">
-          <span>Password</span>
+          <span>密码</span>
           <input
             v-model="password"
             type="password"
-            placeholder="your little secret word"
+            placeholder="输入你的小秘密"
             autocomplete="current-password"
           />
         </label>
 
         <p v-if="error" class="form-error">{{ error }}</p>
 
-        <button type="submit" class="btn btn-primary btn-block">Come In 💕</button>
+        <button type="submit" class="btn btn-primary btn-block">进来吧 💕</button>
       </form>
 
       <div class="quick-login">
-        <p class="quick-title">Quick entry (only two of you here):</p>
+        <p class="quick-title">快速登录（只有你们两个哦）：</p>
         <div class="quick-buttons">
           <button type="button" class="btn btn-ghost btn-sky" @click="quickFill('A')">
-            Little Bear
+            小熊
             <small>loverA · together4ever</small>
           </button>
           <button type="button" class="btn btn-ghost btn-pink" @click="quickFill('B')">
-            Sweet Bunny
+            小兔
             <small>loverB · myheartforyou</small>
           </button>
         </div>
       </div>
 
       <p class="privacy-note">
-        🔒 Everything you write stays only on this device. No cloud, no tracking.
+        🔒 你写的一切只保存在这台设备上。没有云端，没有追踪。
       </p>
     </div>
 

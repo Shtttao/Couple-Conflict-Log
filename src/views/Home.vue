@@ -86,24 +86,24 @@ onMounted(reload)
         </div>
 
         <div class="hero-text">
-          <h2>Hi, {{ state.user.displayName }} <span class="wave">♡</span></h2>
+          <h2>你好，{{ state.user.displayName }} <span class="wave">♡</span></h2>
           <p>
-            A soft little place to record disagreements together.
-            You write only your own side, and your partner writes theirs.
-            Hearts grow when we listen.
+            一个温柔的小角落，一起记录争执。
+            你写你的想法，对方写对方的想法。
+            倾听让爱成长。
           </p>
           <div class="hero-stats">
             <div class="stat stat-pink">
               <span class="stat-num">{{ stats.total }}</span>
-              <span class="stat-label">Memories</span>
+              <span class="stat-label">回忆</span>
             </div>
             <div class="stat stat-peach">
               <span class="stat-num">{{ stats.open }}</span>
-              <span class="stat-label">Still to hug</span>
+              <span class="stat-label">待拥抱</span>
             </div>
             <div class="stat stat-mint">
               <span class="stat-num">{{ stats.resolved }}</span>
-              <span class="stat-label">Reconciled</span>
+              <span class="stat-label">已和解</span>
             </div>
           </div>
         </div>
@@ -111,22 +111,22 @@ onMounted(reload)
 
       <section class="toolbar">
         <button class="btn btn-primary" @click="showForm = !showForm">
-          <template v-if="!showForm">＋ New Conflict Log</template>
-          <template v-else>✕ Close Form</template>
+          <template v-if="!showForm">＋ 新建吵架记录</template>
+          <template v-else>✕ 关闭表单</template>
         </button>
         <div class="filter-chip">
           <button
             :class="{ active: filter === 'all' }"
             @click="filter = 'all'"
-          >All</button>
+          >全部</button>
           <button
             :class="{ active: filter === 'open' }"
             @click="filter = 'open'"
-          >Open</button>
+          >未和解</button>
           <button
             :class="{ active: filter === 'resolved' }"
             @click="filter = 'resolved'"
-          >Resolved</button>
+          >已和解</button>
         </div>
       </section>
 
@@ -138,11 +138,11 @@ onMounted(reload)
       />
 
       <section class="list">
-        <p v-if="loading" class="muted center">Loading soft memories…</p>
+        <p v-if="loading" class="muted center">正在加载甜蜜的回忆…</p>
         <p v-else-if="!visible.length" class="empty-note">
           <span class="empty-emoji">🌸</span>
           <span>
-            Nothing here yet. Tap the button above to start a new little reflection.
+            这里空空如也。点击上方按钮开始新的反思吧。
           </span>
         </p>
 
@@ -161,10 +161,10 @@ onMounted(reload)
           class="btn btn-ghost btn-danger btn-small"
           @click="onWipe"
         >
-          {{ confirmWipe ? '⚠ Click again to erase everything' : 'Erase all local data' }}
+          {{ confirmWipe ? '⚠ 再次点击确认删除' : '清除所有本地数据' }}
         </button>
         <p class="privacy-footer">
-          🔒 Stored only on this device · IndexedDB · no server, no tracking.
+          🔒 数据仅存储在此设备 · IndexedDB · 无服务器，无追踪。
         </p>
       </footer>
     </main>
