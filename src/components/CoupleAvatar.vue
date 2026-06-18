@@ -1,17 +1,22 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 defineProps({
   variant: { type: String, default: 'together' }, // together / bear / bunny
   size: { type: String, default: 'medium' } // small / medium / big
 })
 
-// 图片加载失败的状态
-const boyImgError = ref(false)
-const girlImgError = ref(false)
+// 图片加载状态：true = 成功加载真实图片，false = 显示 SVG fallback
+const boyLoaded = ref(false)
+const girlLoaded = ref(false)
 
-const onBoyError = () => { boyImgError.value = true }
-const onGirlError = () => { girlImgError.value = true }
+// 用运行时拼接路径，避免 Vite 静态分析时检查文件是否存在
+const boySrc = '/images/couple-boy.png'
+const girlSrc = '/images/couple-girl.png'
+
+const onBoyLoad = () => { boyLoaded.value = true }
+const onGirlLoad = () => { girlLoaded.value = true }
+// 图片加载失败时保持 false，显示 SVG fallback
 </script>
 
 <template>
@@ -22,18 +27,45 @@ const onGirlError = () => { girlImgError.value = true }
 
       <!-- 男生圆形头像 -->
       <div class="photo-circle photo-boy">
-        <!-- 优先显示照片 -->
-        <img v-if="!boyImgError" src="/images/couple-boy.png" alt="男生头像" @error="onBoyError" />
-        <!-- 照片加载失败时，显示一个优雅备用头像 -->
-        <div v-else class="fallback-boy">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="40" r="18" fill="#5a4a3a"/>
-            <path d="M20 75 Q50 60 80 75 L80 90 L20 90 Z" fill="#6b8ba8"/>
-            <circle cx="40" cy="42" r="4" fill="#fff"/>
-            <circle cx="60" cy="42" r="4" fill="#fff"/>
-            <path d="M40 52 Q50 58 60 52" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
-          </svg>
-        </div>
+        <!-- 优先显示真实照片 -->
+        <img
+          :src="boySrc"
+          alt="男生头像"
+          @load="onBoyLoad"
+          @error="boyLoaded = false"
+          v-show="boyLoaded"
+        />
+        <!-- SVG fallback（默认显示，直到图片加载成功后隐藏） -->
+        <svg v-show="!boyLoaded" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="fallback-svg">
+          <!-- 蓝色T恤 -->
+          <path d="M20 78 Q50 70 80 78 L80 92 L20 92 Z" fill="#6b8ba8"/>
+          <!-- 领口 -->
+          <path d="M42 74 Q50 78 58 74" stroke="#4a6a88" stroke-width="1.2" fill="none"/>
+          <!-- 脖子 -->
+          <rect x="42" y="64" width="16" height="14" rx="4" fill="#f5d0b8"/>
+          <!-- 头部 -->
+          <ellipse cx="50" cy="46" rx="20" ry="22" fill="#f5d0b8"/>
+          <!-- 头发（短发蓬松） -->
+          <path d="M30 44 Q28 20 50 18 Q72 20 70 44 Q72 30 60 28 Q55 22 50 24 Q45 22 40 28 Q28 30 30 44 Z" fill="#3a3a3a"/>
+          <!-- 刘海 -->
+          <path d="M36 40 Q42 30 50 34 Q58 30 64 40 Q62 44 55 42 Q50 46 45 42 Q38 44 36 40 Z" fill="#2a2a2a"/>
+          <!-- 腮红 -->
+          <ellipse cx="38" cy="52" rx="4" ry="2.5" fill="#ffb8b8" opacity="0.6"/>
+          <ellipse cx="62" cy="52" rx="4" ry="2.5" fill="#ffb8b8" opacity="0.6"/>
+          <!-- 眼睛（大圆可爱眼） -->
+          <circle cx="42" cy="46" r="3.5" fill="#2a2a2a"/>
+          <circle cx="58" cy="46" r="3.5" fill="#2a2a2a"/>
+          <circle cx="43.5" cy="45" r="1.2" fill="#fff"/>
+          <circle cx="59.5" cy="45" r="1.2" fill="#fff"/>
+          <!-- 眉毛 -->
+          <path d="M38 40 Q42 37 46 40" stroke="#2a2a2a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M54 40 Q58 37 62 40" stroke="#2a2a2a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- 微笑嘴巴 -->
+          <path d="M44 58 Q50 62 56 58" stroke="#c07070" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <!-- 耳朵 -->
+          <ellipse cx="30" cy="46" rx="3" ry="5" fill="#f5d0b8"/>
+          <ellipse cx="70" cy="46" rx="3" ry="5" fill="#f5d0b8"/>
+        </svg>
       </div>
 
       <!-- 中间的心形连接 -->
@@ -41,16 +73,52 @@ const onGirlError = () => { girlImgError.value = true }
 
       <!-- 女生圆形头像 -->
       <div class="photo-circle photo-girl">
-        <img v-if="!girlImgError" src="/images/couple-girl.png" alt="女生头像" @error="onGirlError" />
-        <div v-else class="fallback-girl">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <path d="M30 35 Q50 20 70 35 Q72 55 65 70 Q50 65 35 70 Q28 55 30 35 Z" fill="#4a3a3a"/>
-            <ellipse cx="50" cy="55" rx="18" ry="20" fill="#ffd5c0"/>
-            <circle cx="42" cy="55" r="3.5" fill="#2a2a2a"/>
-            <circle cx="58" cy="55" r="3.5" fill="#2a2a2a"/>
-            <path d="M42 65 Q50 72 58 65" stroke="#c07070" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-          </svg>
-        </div>
+        <img
+          :src="girlSrc"
+          alt="女生头像"
+          @load="onGirlLoad"
+          @error="girlLoaded = false"
+          v-show="girlLoaded"
+        />
+        <!-- SVG fallback -->
+        <svg v-show="!girlLoaded" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="fallback-svg">
+          <!-- 长发（背后部分） -->
+          <path d="M18 48 Q12 75 22 88 Q30 84 35 78 L35 72 Q25 75 22 60 Q18 55 18 48 Z" fill="#4a3a3a"/>
+          <path d="M82 48 Q88 75 78 88 Q70 84 65 78 L65 72 Q75 75 78 60 Q82 55 82 48 Z" fill="#4a3a3a"/>
+          <!-- 米白上衣 -->
+          <path d="M22 82 Q50 74 78 82 L78 92 L22 92 Z" fill="#e8dcc8"/>
+          <!-- 领口 -->
+          <path d="M40 78 Q50 82 60 78" stroke="#d0c0a8" stroke-width="1.2" fill="none"/>
+          <!-- 心形项链 -->
+          <path d="M47 86 L50 90 L53 86 Q52 83 50 83 Q48 83 47 86 Z" fill="#ff9cb5" stroke="#d87890" stroke-width="0.6"/>
+          <!-- 脖子 -->
+          <rect x="42" y="62" width="16" height="16" rx="4" fill="#f5d8c0"/>
+          <!-- 头部 -->
+          <ellipse cx="50" cy="44" rx="20" ry="23" fill="#f5d8c0"/>
+          <!-- 前发（刘海蓬松） -->
+          <path d="M30 40 Q28 18 50 16 Q72 18 70 40 Q72 28 60 26 Q55 20 50 22 Q45 20 40 26 Q28 28 30 40 Z" fill="#4a3a3a"/>
+          <!-- 刘海细节 -->
+          <path d="M36 38 Q44 26 50 32 Q56 26 64 38 Q60 42 55 38 Q50 42 45 38 Q40 42 36 38 Z" fill="#3a2a2a"/>
+          <!-- 侧发 -->
+          <path d="M30 40 Q26 55 32 68 Q36 65 36 55 Q35 48 30 40 Z" fill="#4a3a3a"/>
+          <path d="M70 40 Q74 55 68 68 Q64 65 64 55 Q65 48 70 40 Z" fill="#4a3a3a"/>
+          <!-- 腮红（更明显） -->
+          <ellipse cx="36" cy="52" rx="5" ry="3" fill="#ffb8b8" opacity="0.65"/>
+          <ellipse cx="64" cy="52" rx="5" ry="3" fill="#ffb8b8" opacity="0.65"/>
+          <!-- 眼睛（更大更圆，可爱感） -->
+          <circle cx="42" cy="45" r="4" fill="#2a2a2a"/>
+          <circle cx="58" cy="45" r="4" fill="#2a2a2a"/>
+          <circle cx="43.5" cy="44" r="1.5" fill="#fff"/>
+          <circle cx="59.5" cy="44" r="1.5" fill="#fff"/>
+          <!-- 眉毛 -->
+          <path d="M38 38 Q42 36 46 38" stroke="#3a2a2a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <path d="M54 38 Q58 36 62 38" stroke="#3a2a2a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <!-- 微笑嘴巴 -->
+          <path d="M44 58 Q50 62 56 58" stroke="#c07070" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <!-- 耳朵 -->
+          <ellipse cx="30" cy="48" rx="3" ry="5" fill="#f5d8c0"/>
+          <ellipse cx="70" cy="48" rx="3" ry="5" fill="#f5d8c0"/>
+        </svg>
       </div>
 
     </div>
@@ -58,21 +126,32 @@ const onGirlError = () => { girlImgError.value = true }
     <!-- ========== 单人模式：只显示男生 ========== -->
     <div v-if="variant === 'bear'" class="avatar-wrap single-wrap">
       <div class="photo-circle photo-boy">
-        <img v-if="!boyImgError" src="/images/couple-boy.png" alt="男生头像" @error="onBoyError" />
-        <div v-else class="fallback-boy">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <path d="M25 38 Q50 25 75 38 Q78 58 72 72 L68 72 Q50 60 32 72 L28 72 Q22 58 25 38 Z" fill="#3a3a3a"/>
-            <circle cx="50" cy="50" r="16" fill="#ffd5c0"/>
-            <circle cx="42" cy="52" r="3.5" fill="#2a2a2a"/>
-            <circle cx="58" cy="52" r="3.5" fill="#2a2a2a"/>
-            <circle cx="43" cy="51" r="1.2" fill="#fff"/>
-            <circle cx="57" cy="51" r="1.2" fill="#fff"/>
-            <ellipse cx="38" cy="58" rx="4" ry="2.5" fill="#ffb8b8" opacity="0.5"/>
-            <ellipse cx="62" cy="58" rx="4" ry="2.5" fill="#ffb8b8" opacity="0.5"/>
-            <path d="M40 65 Q50 70 60 65" stroke="#c07070" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <path d="M25 78 Q50 70 75 78 L75 90 L25 90 Z" fill="#6b8ba8"/>
-          </svg>
-        </div>
+        <img
+          :src="boySrc"
+          alt="男生头像"
+          @load="onBoyLoad"
+          @error="boyLoaded = false"
+          v-show="boyLoaded"
+        />
+        <svg v-show="!boyLoaded" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="fallback-svg">
+          <path d="M20 78 Q50 70 80 78 L80 92 L20 92 Z" fill="#6b8ba8"/>
+          <path d="M42 74 Q50 78 58 74" stroke="#4a6a88" stroke-width="1.2" fill="none"/>
+          <rect x="42" y="64" width="16" height="14" rx="4" fill="#f5d0b8"/>
+          <ellipse cx="50" cy="46" rx="20" ry="22" fill="#f5d0b8"/>
+          <path d="M30 44 Q28 20 50 18 Q72 20 70 44 Q72 30 60 28 Q55 22 50 24 Q45 22 40 28 Q28 30 30 44 Z" fill="#3a3a3a"/>
+          <path d="M36 40 Q42 30 50 34 Q58 30 64 40 Q62 44 55 42 Q50 46 45 42 Q38 44 36 40 Z" fill="#2a2a2a"/>
+          <ellipse cx="38" cy="52" rx="4" ry="2.5" fill="#ffb8b8" opacity="0.6"/>
+          <ellipse cx="62" cy="52" rx="4" ry="2.5" fill="#ffb8b8" opacity="0.6"/>
+          <circle cx="42" cy="46" r="3.5" fill="#2a2a2a"/>
+          <circle cx="58" cy="46" r="3.5" fill="#2a2a2a"/>
+          <circle cx="43.5" cy="45" r="1.2" fill="#fff"/>
+          <circle cx="59.5" cy="45" r="1.2" fill="#fff"/>
+          <path d="M38 40 Q42 37 46 40" stroke="#2a2a2a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M54 40 Q58 37 62 40" stroke="#2a2a2a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M44 58 Q50 62 56 58" stroke="#c07070" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <ellipse cx="30" cy="46" rx="3" ry="5" fill="#f5d0b8"/>
+          <ellipse cx="70" cy="46" rx="3" ry="5" fill="#f5d0b8"/>
+        </svg>
       </div>
       <div class="name-tag tag-boy">小熊 ♡</div>
     </div>
@@ -80,23 +159,35 @@ const onGirlError = () => { girlImgError.value = true }
     <!-- ========== 单人模式：只显示女生 ========== -->
     <div v-if="variant === 'bunny'" class="avatar-wrap single-wrap">
       <div class="photo-circle photo-girl">
-        <img v-if="!girlImgError" src="/images/couple-girl.png" alt="女生头像" @error="onGirlError" />
-        <div v-else class="fallback-girl">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <path d="M25 35 Q50 18 75 35 Q82 70 70 80 Q70 75 65 72 Q50 80 35 72 Q30 75 30 80 Q18 70 25 35 Z" fill="#4a3a3a"/>
-            <circle cx="50" cy="48" r="17" fill="#ffd5c0"/>
-            <circle cx="40" cy="50" r="4" fill="#2a2a2a"/>
-            <circle cx="60" cy="50" r="4" fill="#2a2a2a"/>
-            <circle cx="41" cy="49" r="1.5" fill="#fff"/>
-            <circle cx="61" cy="49" r="1.5" fill="#fff"/>
-            <ellipse cx="36" cy="57" rx="5" ry="3" fill="#ffb8b8" opacity="0.55"/>
-            <ellipse cx="64" cy="57" rx="5" ry="3" fill="#ffb8b8" opacity="0.55"/>
-            <path d="M40 62 Q50 68 60 62" stroke="#c07070" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <path d="M25 82 Q50 74 75 82 L75 90 L25 90 Z" fill="#e8dcc8"/>
-            <path d="M40 78 Q50 82 60 78" stroke="#d0c0a8" stroke-width="1.5" fill="none"/>
-            <path d="M47 85 Q50 88 53 85 Q50 90 47 85 Z" fill="#ffb8b8"/>
-          </svg>
-        </div>
+        <img
+          :src="girlSrc"
+          alt="女生头像"
+          @load="onGirlLoad"
+          @error="girlLoaded = false"
+          v-show="girlLoaded"
+        />
+        <svg v-show="!girlLoaded" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="fallback-svg">
+          <path d="M18 48 Q12 75 22 88 Q30 84 35 78 L35 72 Q25 75 22 60 Q18 55 18 48 Z" fill="#4a3a3a"/>
+          <path d="M82 48 Q88 75 78 88 Q70 84 65 78 L65 72 Q75 75 78 60 Q82 55 82 48 Z" fill="#4a3a3a"/>
+          <path d="M22 82 Q50 74 78 82 L78 92 L22 92 Z" fill="#e8dcc8"/>
+          <path d="M40 78 Q50 82 60 78" stroke="#d0c0a8" stroke-width="1.2" fill="none"/>
+          <path d="M47 86 L50 90 L53 86 Q52 83 50 83 Q48 83 47 86 Z" fill="#ff9cb5" stroke="#d87890" stroke-width="0.6"/>
+          <rect x="42" y="62" width="16" height="16" rx="4" fill="#f5d8c0"/>
+          <ellipse cx="50" cy="44" rx="20" ry="23" fill="#f5d8c0"/>
+          <path d="M30 40 Q28 18 50 16 Q72 18 70 40 Q72 28 60 26 Q55 20 50 22 Q45 20 40 26 Q28 28 30 40 Z" fill="#4a3a3a"/>
+          <path d="M36 38 Q44 26 50 32 Q56 26 64 38 Q60 42 55 38 Q50 42 45 38 Q40 42 36 38 Z" fill="#3a2a2a"/>
+          <ellipse cx="36" cy="52" rx="5" ry="3" fill="#ffb8b8" opacity="0.65"/>
+          <ellipse cx="64" cy="52" rx="5" ry="3" fill="#ffb8b8" opacity="0.65"/>
+          <circle cx="42" cy="45" r="4" fill="#2a2a2a"/>
+          <circle cx="58" cy="45" r="4" fill="#2a2a2a"/>
+          <circle cx="43.5" cy="44" r="1.5" fill="#fff"/>
+          <circle cx="59.5" cy="44" r="1.5" fill="#fff"/>
+          <path d="M38 38 Q42 36 46 38" stroke="#3a2a2a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <path d="M54 38 Q58 36 62 38" stroke="#3a2a2a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <path d="M44 58 Q50 62 56 58" stroke="#c07070" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <ellipse cx="30" cy="48" rx="3" ry="5" fill="#f5d8c0"/>
+          <ellipse cx="70" cy="48" rx="3" ry="5" fill="#f5d8c0"/>
+        </svg>
       </div>
       <div class="name-tag tag-girl">小兔 ♡</div>
     </div>
@@ -142,7 +233,7 @@ const onGirlError = () => { girlImgError.value = true }
   display: block;
 }
 
-.photo-circle svg {
+.fallback-svg {
   width: 100%;
   height: 100%;
   display: block;
@@ -154,13 +245,7 @@ const onGirlError = () => { girlImgError.value = true }
     0 10px 25px rgba(100, 150, 200, 0.35),
     0 0 0 5px rgba(255, 255, 255, 0.9),
     0 0 0 7px rgba(168, 204, 232, 0.4);
-  background: linear-gradient(135deg, #d4e8f7, #a8cce8);
-}
-
-.fallback-boy {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #e8f0f8, #bcd0e4);
+  background: linear-gradient(135deg, #e0ecf7, #a8cce8);
 }
 
 /* 女生头像背景色边框 */
@@ -170,12 +255,6 @@ const onGirlError = () => { girlImgError.value = true }
     0 0 0 5px rgba(255, 255, 255, 0.9),
     0 0 0 7px rgba(252, 228, 236, 0.5);
   background: linear-gradient(135deg, #fce4ec, #f8bbd0);
-}
-
-.fallback-girl {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #f8e8ee, #f0c4d4);
 }
 
 /* ========== 尺寸调整 ========== */
@@ -195,12 +274,6 @@ const onGirlError = () => { girlImgError.value = true }
   align-items: center;
   gap: 18px;
   position: relative;
-}
-
-/* 让两个头像稍微靠近，像靠在一起 */
-.together-wrap .photo-boy,
-.together-wrap .photo-girl {
-  z-index: 2;
 }
 
 /* 中间的心形连接 */
@@ -258,7 +331,7 @@ const onGirlError = () => { girlImgError.value = true }
 }
 
 @keyframes heart-pulse {
-  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.85; }
   50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
 }
 
