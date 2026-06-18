@@ -1,269 +1,112 @@
 <script setup>
+import { ref } from 'vue'
+
 defineProps({
   variant: { type: String, default: 'together' }, // together / bear / bunny
   size: { type: String, default: 'medium' } // small / medium / big
 })
+
+// 图片加载失败的状态
+const boyImgError = ref(false)
+const girlImgError = ref(false)
+
+const onBoyError = () => { boyImgError.value = true }
+const onGirlError = () => { girlImgError.value = true }
 </script>
 
 <template>
   <div class="couple-avatar" :class="[variant, size]">
-    <!-- ============ BOY - 蓬松短发、蓝色T恤、柔和表情 ============ -->
-    <svg v-if="variant !== 'bunny'" class="avatar bear" viewBox="0 0 160 180" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <!-- 男生背景 - 淡蓝色 -->
-        <radialGradient id="bgBoy" cx="50%" cy="45%">
-          <stop offset="0%" stop-color="#d4e8f7" />
-          <stop offset="100%" stop-color="#a8cce8" />
-        </radialGradient>
-        <!-- 蓝色T恤 -->
-        <linearGradient id="shirtBoy" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stop-color="#7ba3c8" />
-          <stop offset="100%" stop-color="#5a8ab8" />
-        </linearGradient>
-        <!-- 肤色 -->
-        <radialGradient id="skinBoy" cx="50%" cy="45%">
-          <stop offset="0%" stop-color="#ffe8d8" />
-          <stop offset="100%" stop-color="#f5d4c0" />
-        </radialGradient>
-        <!-- 头发 -->
-        <linearGradient id="hairBoy" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stop-color="#3a3a3a" />
-          <stop offset="100%" stop-color="#1a1a1a" />
-        </linearGradient>
-      </defs>
 
-      <!-- 背景圆形 -->
-      <circle cx="80" cy="90" r="70" fill="url(#bgBoy)" opacity="0.6" />
+    <!-- ========== 双人模式：并排显示 ========== -->
+    <div v-if="variant === 'together'" class="avatar-wrap together-wrap">
 
-      <!-- 身体/T恤 -->
-      <path d="M25 170 Q25 130 80 125 Q135 130 135 170 Z" fill="url(#shirtBoy)" />
-      <!-- 领口 -->
-      <path d="M60 125 Q80 135 100 125" stroke="#4a7aa5" stroke-width="1.5" fill="none" stroke-linecap="round" />
-      <!-- 领口内侧 -->
-      <path d="M65 125 Q80 132 95 125" stroke="#6a9ac5" stroke-width="1" fill="none" opacity="0.5" />
-      <!-- 衣服上的小方块logo -->
-      <rect x="72" y="152" width="8" height="8" rx="1.5" fill="#e8e8e8" opacity="0.8" />
-      <rect x="74" y="154" width="4" height="4" rx="0.5" fill="#b0b0b0" opacity="0.5" />
+      <!-- 男生圆形头像 -->
+      <div class="photo-circle photo-boy">
+        <!-- 优先显示照片 -->
+        <img v-if="!boyImgError" src="/images/couple-boy.png" alt="男生头像" @error="onBoyError" />
+        <!-- 照片加载失败时，显示一个优雅备用头像 -->
+        <div v-else class="fallback-boy">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="40" r="18" fill="#5a4a3a"/>
+            <path d="M20 75 Q50 60 80 75 L80 90 L20 90 Z" fill="#6b8ba8"/>
+            <circle cx="40" cy="42" r="4" fill="#fff"/>
+            <circle cx="60" cy="42" r="4" fill="#fff"/>
+            <path d="M40 52 Q50 58 60 52" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
 
-      <!-- 脖子 -->
-      <rect x="68" y="108" width="24" height="22" rx="8" fill="url(#skinBoy)" />
-      <!-- 脖子阴影 -->
-      <path d="M68 120 Q80 126 92 120" stroke="#e0c0a8" stroke-width="1" fill="none" opacity="0.4" />
+      <!-- 中间的心形连接 -->
+      <div class="heart-connector">♡</div>
 
-      <!-- 头部 -->
-      <ellipse cx="80" cy="68" rx="42" ry="44" fill="url(#skinBoy)" />
+      <!-- 女生圆形头像 -->
+      <div class="photo-circle photo-girl">
+        <img v-if="!girlImgError" src="/images/couple-girl.png" alt="女生头像" @error="onGirlError" />
+        <div v-else class="fallback-girl">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 35 Q50 20 70 35 Q72 55 65 70 Q50 65 35 70 Q28 55 30 35 Z" fill="#4a3a3a"/>
+            <ellipse cx="50" cy="55" rx="18" ry="20" fill="#ffd5c0"/>
+            <circle cx="42" cy="55" r="3.5" fill="#2a2a2a"/>
+            <circle cx="58" cy="55" r="3.5" fill="#2a2a2a"/>
+            <path d="M42 65 Q50 72 58 65" stroke="#c07070" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
 
-      <!-- ===== 头发（蓬松短发，多层） ===== -->
-      <!-- 头发主体 - 蓬松感 -->
-      <path
-        d="M36 60
-           Q32 25 55 18
-           Q70 12 80 14
-           Q90 12 105 18
-           Q128 25 124 60
-           Q126 48 115 44
-           Q110 35 95 32
-           Q85 28 80 30
-           Q75 28 65 32
-           Q50 35 45 44
-           Q34 48 36 60 Z"
-        fill="url(#hairBoy)"
-      />
-      <!-- 顶部蓬松 -->
-      <path d="M55 18 Q70 8 80 10 Q90 8 105 18 Q95 14 80 16 Q65 14 55 18 Z" fill="url(#hairBoy)" />
-      <!-- 左侧头发 -->
-      <path d="M36 60 Q34 72 40 82 Q44 78 44 68 Z" fill="url(#hairBoy)" />
-      <!-- 右侧头发 -->
-      <path d="M124 60 Q126 72 120 82 Q116 78 116 68 Z" fill="url(#hairBoy)" />
-      <!-- 刘海 - 自然分开 -->
-      <path d="M48 48 Q55 38 65 42 Q62 52 55 54 Q48 56 48 48 Z" fill="url(#hairBoy)" />
-      <path d="M65 40 Q75 34 85 40 Q82 50 75 52 Q68 50 65 40 Z" fill="url(#hairBoy)" />
-      <path d="M85 40 Q95 36 105 44 Q102 54 95 56 Q88 54 85 40 Z" fill="url(#hairBoy)" />
-      <path d="M105 44 Q112 42 118 52 Q115 58 108 58 Q104 54 105 44 Z" fill="url(#hairBoy)" />
-      <!-- 头发高光 -->
-      <ellipse cx="60" cy="28" rx="8" ry="4" fill="#555" opacity="0.3" />
-      <ellipse cx="100" cy="30" rx="6" ry="3" fill="#555" opacity="0.3" />
+    </div>
 
-      <!-- 耳朵 -->
-      <ellipse cx="38" cy="72" rx="6" ry="10" fill="url(#skinBoy)" />
-      <ellipse cx="122" cy="72" rx="6" ry="10" fill="url(#skinBoy)" />
-      <!-- 耳朵内侧 -->
-      <ellipse cx="38" cy="72" rx="3" ry="6" fill="#f0c8b0" opacity="0.5" />
-      <ellipse cx="122" cy="72" rx="3" ry="6" fill="#f0c8b0" opacity="0.5" />
+    <!-- ========== 单人模式：只显示男生 ========== -->
+    <div v-if="variant === 'bear'" class="avatar-wrap single-wrap">
+      <div class="photo-circle photo-boy">
+        <img v-if="!boyImgError" src="/images/couple-boy.png" alt="男生头像" @error="onBoyError" />
+        <div v-else class="fallback-boy">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25 38 Q50 25 75 38 Q78 58 72 72 L68 72 Q50 60 32 72 L28 72 Q22 58 25 38 Z" fill="#3a3a3a"/>
+            <circle cx="50" cy="50" r="16" fill="#ffd5c0"/>
+            <circle cx="42" cy="52" r="3.5" fill="#2a2a2a"/>
+            <circle cx="58" cy="52" r="3.5" fill="#2a2a2a"/>
+            <circle cx="43" cy="51" r="1.2" fill="#fff"/>
+            <circle cx="57" cy="51" r="1.2" fill="#fff"/>
+            <ellipse cx="38" cy="58" rx="4" ry="2.5" fill="#ffb8b8" opacity="0.5"/>
+            <ellipse cx="62" cy="58" rx="4" ry="2.5" fill="#ffb8b8" opacity="0.5"/>
+            <path d="M40 65 Q50 70 60 65" stroke="#c07070" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M25 78 Q50 70 75 78 L75 90 L25 90 Z" fill="#6b8ba8"/>
+          </svg>
+        </div>
+      </div>
+      <div class="name-tag tag-boy">小熊 ♡</div>
+    </div>
 
-      <!-- 腮红 -->
-      <ellipse cx="52" cy="82" rx="10" ry="7" fill="#ffb8b8" opacity="0.5" />
-      <ellipse cx="108" cy="82" rx="10" ry="7" fill="#ffb8b8" opacity="0.5" />
-
-      <!-- 眼睛（大圆眼，可爱风格） -->
-      <!-- 左眼 -->
-      <ellipse cx="62" cy="66" rx="9" ry="11" fill="#2a2a2a" />
-      <ellipse cx="62" cy="67" rx="7" ry="9" fill="#3a3a3a" />
-      <!-- 右眼 -->
-      <ellipse cx="98" cy="66" rx="9" ry="11" fill="#2a2a2a" />
-      <ellipse cx="98" cy="67" rx="7" ry="9" fill="#3a3a3a" />
-      <!-- 眼睛高光 -->
-      <circle cx="65" cy="62" r="3.5" fill="#fff" />
-      <circle cx="101" cy="62" r="3.5" fill="#fff" />
-      <circle cx="59" cy="69" r="1.5" fill="#fff" opacity="0.7" />
-      <circle cx="95" cy="69" r="1.5" fill="#fff" opacity="0.7" />
-
-      <!-- 眉毛 -->
-      <path d="M52 52 Q62 48 72 52" stroke="#3a3a3a" stroke-width="2" fill="none" stroke-linecap="round" />
-      <path d="M88 52 Q98 48 108 52" stroke="#3a3a3a" stroke-width="2" fill="none" stroke-linecap="round" />
-
-      <!-- 鼻子 -->
-      <path d="M78 78 Q80 80 82 78 Q80 82 78 78 Z" fill="#e0a890" opacity="0.6" />
-
-      <!-- 嘴巴（柔和微笑） -->
-      <path d="M68 88 Q80 96 92 88" stroke="#c07070" stroke-width="2" fill="none" stroke-linecap="round" />
-    </svg>
-
-    <!-- ============ GIRL - 长发、米白上衣、心形项链 ============ -->
-    <svg v-if="variant !== 'bear'" class="avatar bunny" viewBox="0 0 160 180" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <!-- 女生背景 - 淡粉色 -->
-        <radialGradient id="bgGirl" cx="50%" cy="45%">
-          <stop offset="0%" stop-color="#fce4ec" />
-          <stop offset="100%" stop-color="#f8bbd0" />
-        </radialGradient>
-        <!-- 米白上衣 -->
-        <linearGradient id="shirtGirl" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stop-color="#f5f0e8" />
-          <stop offset="100%" stop-color="#e8e0d0" />
-        </linearGradient>
-        <!-- 肤色 -->
-        <radialGradient id="skinGirl" cx="50%" cy="45%">
-          <stop offset="0%" stop-color="#fff0e0" />
-          <stop offset="100%" stop-color="#f5e0d0" />
-        </radialGradient>
-        <!-- 头发 -->
-        <linearGradient id="hairGirl" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stop-color="#4a3a3a" />
-          <stop offset="100%" stop-color="#2a1a1a" />
-        </linearGradient>
-      </defs>
-
-      <!-- 背景圆形 -->
-      <circle cx="80" cy="90" r="70" fill="url(#bgGirl)" opacity="0.6" />
-
-      <!-- ===== 长发（背后） ===== -->
-      <!-- 左侧长发 -->
-      <path
-        d="M20 70
-           Q12 110 22 150
-           Q28 165 40 170
-           L55 170
-           Q48 140 50 110
-           Q52 90 48 75
-           Q35 72 30 65
-           Q24 68 20 70 Z"
-        fill="url(#hairGirl)"
-      />
-      <!-- 右侧长发 -->
-      <path
-        d="M140 70
-           Q148 110 138 150
-           Q132 165 120 170
-           L105 170
-           Q112 140 110 110
-           Q108 90 112 75
-           Q125 72 130 65
-           Q136 68 140 70 Z"
-        fill="url(#hairGirl)"
-      />
-      <!-- 头发底部波浪 -->
-      <path d="M40 170 Q55 175 70 170 Q85 175 100 170" stroke="url(#hairGirl)" stroke-width="8" fill="none" stroke-linecap="round" />
-
-      <!-- 身体/米白上衣 -->
-      <path d="M25 170 Q25 132 80 128 Q135 132 135 170 Z" fill="url(#shirtGirl)" />
-      <!-- 领口 -->
-      <path d="M62 128 Q80 138 98 128" stroke="#d0c8b8" stroke-width="1.5" fill="none" stroke-linecap="round" />
-      <!-- 衣服褶皱 -->
-      <path d="M40 150 Q50 155 60 150" stroke="#e0d8c8" stroke-width="1" fill="none" opacity="0.5" />
-      <path d="M100 155 Q110 160 120 155" stroke="#e0d8c8" stroke-width="1" fill="none" opacity="0.5" />
-
-      <!-- 脖子 -->
-      <rect x="68" y="108" width="24" height="24" rx="8" fill="url(#skinGirl)" />
-      <!-- 脖子阴影 -->
-      <path d="M68 120 Q80 126 92 120" stroke="#e0c8b0" stroke-width="1" fill="none" opacity="0.4" />
-
-      <!-- 头部 -->
-      <ellipse cx="80" cy="68" rx="42" ry="44" fill="url(#skinGirl)" />
-
-      <!-- ===== 前发（刘海） ===== -->
-      <path
-        d="M36 58
-           Q34 22 55 16
-           Q70 10 80 12
-           Q90 10 105 16
-           Q126 22 124 58
-           Q122 42 110 38
-           Q100 30 85 28
-           Q80 26 75 28
-           Q60 30 50 38
-           Q38 42 36 58 Z"
-        fill="url(#hairGirl)"
-      />
-      <!-- 刘海细节 -->
-      <path d="M48 42 Q55 34 62 38 Q58 46 52 48 Q46 46 48 42 Z" fill="url(#hairGirl)" />
-      <path d="M62 36 Q70 30 78 36 Q75 44 68 46 Q62 44 62 36 Z" fill="url(#hairGirl)" />
-      <path d="M78 36 Q86 32 94 38 Q90 46 84 48 Q78 46 78 36 Z" fill="url(#hairGirl)" />
-      <path d="M94 38 Q102 36 108 44 Q104 50 98 50 Q94 48 94 38 Z" fill="url(#hairGirl)" />
-      <!-- 头发高光 -->
-      <ellipse cx="55" cy="24" rx="10" ry="4" fill="#5a4a4a" opacity="0.4" />
-      <ellipse cx="105" cy="26" rx="8" ry="3" fill="#5a4a4a" opacity="0.4" />
-
-      <!-- 耳朵 -->
-      <ellipse cx="38" cy="72" rx="6" ry="10" fill="url(#skinGirl)" />
-      <ellipse cx="122" cy="72" rx="6" ry="10" fill="url(#skinGirl)" />
-      <!-- 耳朵内侧 -->
-      <ellipse cx="38" cy="72" rx="3" ry="6" fill="#f0d8c8" opacity="0.5" />
-      <ellipse cx="122" cy="72" rx="3" ry="6" fill="#f0d8c8" opacity="0.5" />
-
-      <!-- 腮红（更明显） -->
-      <ellipse cx="52" cy="82" rx="11" ry="8" fill="#ffb8b8" opacity="0.55" />
-      <ellipse cx="108" cy="82" rx="11" ry="8" fill="#ffb8b8" opacity="0.55" />
-
-      <!-- 眼睛（大圆眼，比男生更大更可爱） -->
-      <!-- 左眼 -->
-      <ellipse cx="62" cy="64" rx="10" ry="12" fill="#2a2a2a" />
-      <ellipse cx="62" cy="65" rx="8" ry="10" fill="#3a3a3a" />
-      <!-- 右眼 -->
-      <ellipse cx="98" cy="64" rx="10" ry="12" fill="#2a2a2a" />
-      <ellipse cx="98" cy="65" rx="8" ry="10" fill="#3a3a3a" />
-      <!-- 眼睛高光 -->
-      <circle cx="65" cy="60" r="4" fill="#fff" />
-      <circle cx="101" cy="60" r="4" fill="#fff" />
-      <circle cx="59" cy="68" r="2" fill="#fff" opacity="0.7" />
-      <circle cx="95" cy="68" r="2" fill="#fff" opacity="0.7" />
-
-      <!-- 眉毛 -->
-      <path d="M52 50 Q62 46 72 50" stroke="#3a2a2a" stroke-width="2" fill="none" stroke-linecap="round" />
-      <path d="M88 50 Q98 46 108 50" stroke="#3a2a2a" stroke-width="2" fill="none" stroke-linecap="round" />
-
-      <!-- 鼻子 -->
-      <path d="M78 76 Q80 78 82 76 Q80 80 78 76 Z" fill="#e0a890" opacity="0.6" />
-
-      <!-- 嘴巴（柔和微笑） -->
-      <path d="M68 86 Q80 94 92 86" stroke="#c07070" stroke-width="2" fill="none" stroke-linecap="round" />
-
-      <!-- ===== 心形项链 ===== -->
-      <!-- 项链链条 -->
-      <path d="M62 128 Q80 140 98 128" stroke="#c8a8a0" stroke-width="1.2" fill="none" opacity="0.7" />
-      <!-- 心形吊坠 -->
-      <g transform="translate(76 132)">
-        <path d="M0 3 C -3 -1 -8 0 -8 5 C -8 11 0 16 0 16 C 0 16 8 11 8 5 C 8 0 3 -1 0 3 Z"
-              fill="#e8a0a0" stroke="#c88080" stroke-width="0.8" />
-      </g>
-    </svg>
+    <!-- ========== 单人模式：只显示女生 ========== -->
+    <div v-if="variant === 'bunny'" class="avatar-wrap single-wrap">
+      <div class="photo-circle photo-girl">
+        <img v-if="!girlImgError" src="/images/couple-girl.png" alt="女生头像" @error="onGirlError" />
+        <div v-else class="fallback-girl">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25 35 Q50 18 75 35 Q82 70 70 80 Q70 75 65 72 Q50 80 35 72 Q30 75 30 80 Q18 70 25 35 Z" fill="#4a3a3a"/>
+            <circle cx="50" cy="48" r="17" fill="#ffd5c0"/>
+            <circle cx="40" cy="50" r="4" fill="#2a2a2a"/>
+            <circle cx="60" cy="50" r="4" fill="#2a2a2a"/>
+            <circle cx="41" cy="49" r="1.5" fill="#fff"/>
+            <circle cx="61" cy="49" r="1.5" fill="#fff"/>
+            <ellipse cx="36" cy="57" rx="5" ry="3" fill="#ffb8b8" opacity="0.55"/>
+            <ellipse cx="64" cy="57" rx="5" ry="3" fill="#ffb8b8" opacity="0.55"/>
+            <path d="M40 62 Q50 68 60 62" stroke="#c07070" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M25 82 Q50 74 75 82 L75 90 L25 90 Z" fill="#e8dcc8"/>
+            <path d="M40 78 Q50 82 60 78" stroke="#d0c0a8" stroke-width="1.5" fill="none"/>
+            <path d="M47 85 Q50 88 53 85 Q50 90 47 85 Z" fill="#ffb8b8"/>
+          </svg>
+        </div>
+      </div>
+      <div class="name-tag tag-girl">小兔 ♡</div>
+    </div>
 
     <!-- 装饰漂浮元素 -->
     <span class="floaty f1">♡</span>
     <span class="floaty f2">✿</span>
     <span class="floaty f3">☆</span>
     <span class="floaty f4">♡</span>
-    <span class="doodle-sparkle">✦</span>
+
   </div>
 </template>
 
@@ -272,65 +115,189 @@ defineProps({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 0;
+  position: relative;
+  padding: 10px 0;
+}
+
+/* ========== 照片圆形头像 ========== */
+.photo-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background: #fff;
+  box-shadow:
+    0 10px 25px rgba(180, 150, 170, 0.35),
+    0 0 0 5px rgba(255, 255, 255, 0.9),
+    0 0 0 7px rgba(255, 200, 210, 0.3);
+  transition: transform 0.4s ease;
+}
+
+.photo-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-circle svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 男生头像背景色边框 */
+.photo-boy {
+  box-shadow:
+    0 10px 25px rgba(100, 150, 200, 0.35),
+    0 0 0 5px rgba(255, 255, 255, 0.9),
+    0 0 0 7px rgba(168, 204, 232, 0.4);
+  background: linear-gradient(135deg, #d4e8f7, #a8cce8);
+}
+
+.fallback-boy {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #e8f0f8, #bcd0e4);
+}
+
+/* 女生头像背景色边框 */
+.photo-girl {
+  box-shadow:
+    0 10px 25px rgba(240, 150, 180, 0.35),
+    0 0 0 5px rgba(255, 255, 255, 0.9),
+    0 0 0 7px rgba(252, 228, 236, 0.5);
+  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+}
+
+.fallback-girl {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f8e8ee, #f0c4d4);
+}
+
+/* ========== 尺寸调整 ========== */
+.couple-avatar.big .photo-circle {
+  width: 190px;
+  height: 190px;
+}
+
+.couple-avatar.small .photo-circle {
+  width: 90px;
+  height: 90px;
+}
+
+/* ========== 双人并排布局 ========== */
+.together-wrap {
+  display: flex;
+  align-items: center;
+  gap: 18px;
   position: relative;
 }
 
-.avatar {
-  width: 150px;
-  height: 170px;
-  filter: drop-shadow(0 8px 16px rgba(180, 150, 170, 0.3));
+/* 让两个头像稍微靠近，像靠在一起 */
+.together-wrap .photo-boy,
+.together-wrap .photo-girl {
+  z-index: 2;
 }
 
-.couple-avatar.big .avatar { width: 190px; height: 215px; }
-.couple-avatar.small .avatar { width: 96px; height: 108px; }
+/* 中间的心形连接 */
+.heart-connector {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  color: #ff6b9d;
+  text-shadow: 0 2px 10px rgba(255, 107, 157, 0.4);
+  z-index: 5;
+  animation: heart-pulse 2s ease-in-out infinite;
+}
 
-.couple-avatar.together .avatar.bear { z-index: 1; }
-.couple-avatar.together .avatar.bunny { z-index: 2; }
+/* ========== 名字标签 ========== */
+.single-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-/* 微妙的呼吸动画 */
+.name-tag {
+  margin-top: 12px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.tag-boy {
+  background: linear-gradient(135deg, #d4e8f7, #a8cce8);
+  color: #2a5a8a;
+}
+
+.tag-girl {
+  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+  color: #8a3a5a;
+}
+
+/* ========== 呼吸动画 ========== */
 @keyframes breathe {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.02); }
 }
-.avatar.bear { animation: breathe 4s ease-in-out infinite; }
-.avatar.bunny { animation: breathe 4.5s ease-in-out infinite; animation-delay: 1s; }
 
+.photo-boy {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.photo-girl {
+  animation: breathe 4.5s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+
+@keyframes heart-pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+  50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+}
+
+/* ========== 装饰漂浮元素 ========== */
 .floaty {
   position: absolute;
-  font-size: 1rem;
+  font-size: 1.2rem;
   opacity: 0.5;
   animation: floaty 6s ease-in-out infinite;
   pointer-events: none;
+  z-index: 1;
 }
-.f1 { top: 2%; right: 8%; animation-delay: 0s; color: #ff9cb5; font-size: 1.3rem; }
-.f2 { bottom: 12%; left: 2%; animation-delay: 1.6s; color: #98bdff; font-size: 1.1rem; }
-.f3 { top: 30%; left: 48%; animation-delay: 3s; color: #ffc08a; font-size: 0.95rem; }
-.f4 { bottom: 30%; right: 15%; animation-delay: 4.5s; color: #c5a8ff; font-size: 1rem; }
 
-.doodle-sparkle {
-  position: absolute;
-  top: 18%;
-  left: 20%;
-  font-size: 1rem;
-  color: #ffd700;
-  opacity: 0.5;
-  animation: sparkle 2.5s ease-in-out infinite;
-  pointer-events: none;
-}
+.f1 { top: 0; right: 5%; animation-delay: 0s; color: #ff9cb5; font-size: 1.3rem; }
+.f2 { bottom: 15%; left: 0%; animation-delay: 1.6s; color: #98bdff; font-size: 1.1rem; }
+.f3 { top: 30%; right: 20%; animation-delay: 3s; color: #ffc08a; font-size: 0.95rem; }
+.f4 { bottom: 35%; right: 25%; animation-delay: 4.5s; color: #c5a8ff; font-size: 1rem; }
 
 @keyframes floaty {
   0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.4; }
-  50% { transform: translateY(-6px) rotate(12deg); opacity: 0.75; }
+  50% { transform: translateY(-8px) rotate(12deg); opacity: 0.75; }
 }
 
-@keyframes sparkle {
-  0%, 100% { transform: scale(0.8) rotate(0deg); opacity: 0.3; }
-  50% { transform: scale(1.3) rotate(180deg); opacity: 0.7; }
-}
-
+/* ========== 响应式 ========== */
 @media (max-width: 480px) {
-  .avatar { width: 120px; height: 135px; }
-  .couple-avatar.big .avatar { width: 150px; height: 170px; }
+  .photo-circle {
+    width: 100px;
+    height: 100px;
+  }
+  .couple-avatar.big .photo-circle {
+    width: 130px;
+    height: 130px;
+  }
+  .heart-connector {
+    font-size: 1.4rem;
+    bottom: 4px;
+  }
+  .together-wrap {
+    gap: 10px;
+  }
 }
 </style>
