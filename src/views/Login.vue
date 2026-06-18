@@ -74,12 +74,12 @@ function quickFill (who) {
         <p class="quick-title">或一键登录你的角色：</p>
         <div class="quick-buttons">
           <button type="button" class="btn btn-ghost btn-sky" @click="quickFill('A')">
-            小熊 loverA
-            <small>together4ever</small>
+            ♂ 小熊
+            <small>（他的账号）</small>
           </button>
           <button type="button" class="btn btn-ghost btn-pink" @click="quickFill('B')">
-            小兔 loverB
-            <small>myheartforyou</small>
+            ♀ 小兔
+            <small>（她的账号）</small>
           </button>
         </div>
       </div>

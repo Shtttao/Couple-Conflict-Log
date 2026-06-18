@@ -60,7 +60,7 @@ function submit () {
           <span class="avatar-img bear">
             <img src="/images/couple-boy.png" alt="小熊" />
           </span>
-          <h4>小熊 · loverA</h4>
+          <h4>小熊</h4>
           <span v-if="!isMe" class="lock-tag">🔒 对方区域</span>
         </header>
         <textarea
@@ -84,7 +84,7 @@ function submit () {
           <span class="avatar-img bunny">
             <img src="/images/couple-girl.png" alt="小兔" />
           </span>
-          <h4>小兔 · loverB</h4>
+          <h4>小兔</h4>
           <span v-if="isMe" class="lock-tag">🔒 对方区域</span>
         </header>
         <textarea
