@@ -18,7 +18,6 @@ const conflicts = ref([])
 const loading = ref(true)
 const showForm = ref(false)
 const confirmWipe = ref(false)
-
 const filter = ref('all') // all / open / resolved
 
 const visible = computed(() => {
@@ -51,7 +50,7 @@ async function onSaved (record) {
 }
 
 async function onDeleted (id) {
-  if (!window.confirm('Delete this memory? This cannot be undone ♡')) return
+  if (!window.confirm('确定删除这条回忆吗？删除后无法恢复 ♡')) return
   await deleteConflict(id)
   await reload()
 }
@@ -59,6 +58,10 @@ async function onDeleted (id) {
 async function onWipe () {
   if (!confirmWipe.value) {
     confirmWipe.value = true
+    return
+  }
+  if (!window.confirm('最后确认：真的要清空所有吵架记录吗？')) {
+    confirmWipe.value = false
     return
   }
   await wipeAllData()
@@ -77,24 +80,24 @@ onMounted(reload)
       <section class="hero-panel">
         <CoupleAvatar variant="together" size="medium" />
         <div class="hero-text">
-          <h2>Hi, {{ state.user.displayName }} ♡</h2>
+          <h2>你好，{{ state.user.displayName }} ♡</h2>
           <p>
-            A soft little place to record disagreements together.
-            You write only your own side, and your partner writes theirs.
-            Hearts grow when we listen.
+            一个柔软的小角落，一起记录每次争执和和解。
+            你只能写下自己这一侧的反思，留给对方去写他/她那一边。
+            等两颗心都准备好了，再一起慢慢打开看看。
           </p>
           <div class="hero-stats">
             <div class="stat">
               <span class="stat-num">{{ stats.total }}</span>
-              <span class="stat-label">Memories</span>
+              <span class="stat-label">回忆总数</span>
             </div>
             <div class="stat">
               <span class="stat-num stat-peach">{{ stats.open }}</span>
-              <span class="stat-label">Still to hug</span>
+              <span class="stat-label">待拥抱</span>
             </div>
             <div class="stat">
               <span class="stat-num stat-mint">{{ stats.resolved }}</span>
-              <span class="stat-label">Reconciled</span>
+              <span class="stat-label">已和解</span>
             </div>
           </div>
         </div>
@@ -102,22 +105,13 @@ onMounted(reload)
 
       <section class="toolbar">
         <button class="btn btn-primary" @click="showForm = !showForm">
-          <template v-if="!showForm">＋ New Conflict Log</template>
-          <template v-else>✕ Close Form</template>
+          <template v-if="!showForm">＋ 新建吵架记录</template>
+          <template v-else>✕ 关闭表单</template>
         </button>
         <div class="filter-chip">
-          <button
-            :class="{ active: filter === 'all' }"
-            @click="filter = 'all'"
-          >All</button>
-          <button
-            :class="{ active: filter === 'open' }"
-            @click="filter = 'open'"
-          >Open</button>
-          <button
-            :class="{ active: filter === 'resolved' }"
-            @click="filter = 'resolved'"
-          >Resolved</button>
+          <button :class="{ active: filter === 'all' }" @click="filter = 'all'">全部</button>
+          <button :class="{ active: filter === 'open' }" @click="filter = 'open'">未和解</button>
+          <button :class="{ active: filter === 'resolved' }" @click="filter = 'resolved'">已和解</button>
         </div>
       </section>
 
@@ -129,11 +123,11 @@ onMounted(reload)
       />
 
       <section class="list">
-        <p v-if="loading" class="muted center">Loading soft memories…</p>
+        <p v-if="loading" class="muted center">正在温柔地加载回忆…</p>
         <p v-else-if="!visible.length" class="empty-note">
           <span class="empty-emoji">🌸</span>
           <span>
-            Nothing here yet. Tap the button above to start a new little reflection.
+            还没有任何记录。点击上面的"新建吵架记录"，从这次开始好好说话。
           </span>
         </p>
 
@@ -148,14 +142,11 @@ onMounted(reload)
       </section>
 
       <footer class="home-footer">
-        <button
-          class="btn btn-ghost btn-danger btn-small"
-          @click="onWipe"
-        >
-          {{ confirmWipe ? '⚠ Click again to erase everything' : 'Erase all local data' }}
+        <button class="btn btn-ghost btn-danger btn-small" @click="onWipe">
+          {{ confirmWipe ? '⚠ 再次点击：清空全部本地数据' : '清空所有本地记录' }}
         </button>
         <p class="privacy-footer">
-          🔒 Stored only on this device · IndexedDB · no server, no tracking.
+          🔒 所有内容仅保存在本机浏览器 IndexedDB · 无服务器 · 不追踪。
         </p>
       </footer>
     </main>
@@ -165,6 +156,7 @@ onMounted(reload)
 <style scoped>
 .home-wrap {
   min-height: 100vh;
+  min-height: 100dvh;
   background:
     radial-gradient(circle at 15% 10%, rgba(255, 220, 235, 0.55), transparent 45%),
     radial-gradient(circle at 85% 90%, rgba(200, 225, 255, 0.55), transparent 50%),
@@ -180,8 +172,8 @@ onMounted(reload)
 .hero-panel {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 22px;
+  gap: 22px;
+  padding: 24px;
   background: rgba(255, 255, 255, 0.85);
   border-radius: 26px;
   box-shadow: 0 18px 40px rgba(255, 182, 193, 0.18);
@@ -191,13 +183,14 @@ onMounted(reload)
 .hero-text h2 {
   margin: 0 0 6px;
   color: var(--cocoa);
+  font-size: 1.5rem;
 }
 
 .hero-text p {
   margin: 0 0 14px;
   color: #8a7b90;
   font-size: 0.95rem;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .hero-stats {
@@ -210,13 +203,14 @@ onMounted(reload)
   flex: 1 1 110px;
   background: linear-gradient(135deg, #fff0f6, #eef3ff);
   border-radius: 16px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   text-align: center;
+  min-width: 90px;
 }
 
 .stat-num {
   display: block;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: var(--pink-strong);
 }
@@ -228,35 +222,37 @@ onMounted(reload)
   display: block;
   font-size: 0.78rem;
   color: #8a7b90;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: 12px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
 .filter-chip {
   display: inline-flex;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   padding: 4px;
   border-radius: 999px;
   box-shadow: 0 6px 16px rgba(180, 190, 255, 0.25);
 }
 
 .filter-chip button {
-  padding: 7px 14px;
+  padding: 8px 16px;
   border-radius: 999px;
   border: none;
   background: transparent;
   color: #8a7b90;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-family: inherit;
+  min-height: 36px;
 }
 
 .filter-chip button.active {
@@ -268,29 +264,32 @@ onMounted(reload)
 .list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   margin-top: 8px;
 }
 
 .empty-note {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 26px;
+  gap: 14px;
+  padding: 28px;
   background: rgba(255, 255, 255, 0.75);
   border-radius: 22px;
   color: #8a7b90;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .empty-emoji {
-  font-size: 2rem;
+  font-size: 2.4rem;
+  flex-shrink: 0;
 }
 
 .center { text-align: center; }
 .muted { color: #a494a8; padding: 20px; }
 
 .home-footer {
-  margin-top: 28px;
+  margin-top: 32px;
   text-align: center;
 }
 
@@ -298,20 +297,27 @@ onMounted(reload)
   margin-top: 10px;
   font-size: 0.78rem;
   color: #a494a8;
+  line-height: 1.6;
 }
 
 @media (max-width: 720px) {
   .hero-panel {
     flex-direction: column;
     text-align: center;
-    padding: 18px 16px;
+    padding: 20px 16px;
+    gap: 14px;
   }
   .hero-text p { font-size: 0.9rem; }
   .toolbar { justify-content: center; }
+  .stat { padding: 10px 12px; flex-basis: 28%; }
+  .stat-num { font-size: 1.3rem; }
+  .empty-note { padding: 20px; flex-direction: column; text-align: center; }
+  .empty-emoji { font-size: 2rem; }
 }
 
 @media (max-width: 480px) {
   .home-main { padding: 12px 12px 24px; }
-  .stat { flex: 1 1 30%; }
+  .hero-text h2 { font-size: 1.3rem; }
+  .filter-chip button { padding: 6px 12px; font-size: 0.82rem; }
 }
 </style>

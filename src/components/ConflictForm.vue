@@ -19,8 +19,14 @@ const isMe = computed(() => props.user?.role === 'me')
 
 function submit () {
   if (!date.value) {
-    alert('Please pick a date for this memory ♡')
+    alert('请选择日期 ♡')
     return
+  }
+  if (isMe && !myReflection.value.trim()) {
+    if (!window.confirm('你这一侧的反思是空的，确定保存吗？')) return
+  }
+  if (!isMe && !partnerReflection.value.trim()) {
+    if (!window.confirm('你这一侧的反思是空的，确定保存吗？')) return
   }
   emit('created', {
     date: date.value,
@@ -35,34 +41,36 @@ function submit () {
 
 <template>
   <form class="conflict-form" @submit.prevent="submit">
-    <h3 class="form-title">✎ New Conflict Memory</h3>
+    <h3 class="form-title">✎ 新的吵架回忆</h3>
 
     <div class="row row-top">
       <label class="field field-date">
-        <span>Date</span>
+        <span>日期</span>
         <input v-model="date" type="date" />
       </label>
       <div class="field field-tags">
-        <span>Tags (e.g. Money, Family, Habits…)</span>
-        <TagInput v-model="tags" placeholder="Type and press Enter…" />
+        <span>标签（例如：金钱 / 家人 / 习惯…）</span>
+        <TagInput v-model="tags" placeholder="输入后按回车…" />
       </div>
     </div>
 
     <div class="dual-col">
       <section class="panel panel-sky">
         <header class="panel-head">
-          <span class="avatar">🐻</span>
-          <h4>Little Bear</h4>
-          <span v-if="!isMe" class="lock-tag">Locked for partner only</span>
+          <span class="avatar-img bear">
+            <img src="/images/couple-boy.png" alt="小熊" />
+          </span>
+          <h4>小熊 · loverA</h4>
+          <span v-if="!isMe" class="lock-tag">🔒 对方区域</span>
         </header>
         <textarea
           v-model="myReflection"
           :disabled="!isMe"
-          :placeholder="isMe ? 'Write down your feelings, what hurt you, what you wish…' : 'This side belongs to your partner — edit your own panel instead.'"
+          :placeholder="isMe ? '写下你的感受、哪里被刺到了、你希望什么…' : '这一侧属于小熊，去写你自己那一栏就好。'"
           rows="7"
         ></textarea>
         <div class="mood-row">
-          <span class="mood-label">Mood after reflecting:</span>
+          <span class="mood-label">反思后的心情：</span>
           <MoodStars
             v-model="myMood"
             :read-only="!isMe"
@@ -73,18 +81,20 @@ function submit () {
 
       <section class="panel panel-pink">
         <header class="panel-head">
-          <span class="avatar">🐰</span>
-          <h4>Sweet Bunny</h4>
-          <span v-if="isMe" class="lock-tag">Locked for partner only</span>
+          <span class="avatar-img bunny">
+            <img src="/images/couple-girl.png" alt="小兔" />
+          </span>
+          <h4>小兔 · loverB</h4>
+          <span v-if="isMe" class="lock-tag">🔒 对方区域</span>
         </header>
         <textarea
           v-model="partnerReflection"
           :disabled="isMe"
-          :placeholder="!isMe ? 'Write down your feelings, what hurt you, what you wish…' : 'This side belongs to your partner — edit your own panel instead.'"
+          :placeholder="!isMe ? '写下你的感受、哪里被刺到了、你希望什么…' : '这一侧属于小兔，去写你自己那一栏就好。'"
           rows="7"
         ></textarea>
         <div class="mood-row">
-          <span class="mood-label">Mood after reflecting:</span>
+          <span class="mood-label">反思后的心情：</span>
           <MoodStars
             v-model="partnerMood"
             :read-only="isMe"
@@ -95,8 +105,8 @@ function submit () {
     </div>
 
     <div class="actions">
-      <button type="button" class="btn btn-ghost" @click="emit('cancel')">Cancel</button>
-      <button type="submit" class="btn btn-primary">Save this memory ♡</button>
+      <button type="button" class="btn btn-ghost" @click="emit('cancel')">取消</button>
+      <button type="submit" class="btn btn-primary">保存这条回忆 ♡</button>
     </div>
   </form>
 </template>
@@ -113,7 +123,7 @@ function submit () {
 .form-title {
   margin: 0 0 14px;
   color: var(--cocoa);
-  font-size: 1.15rem;
+  font-size: 1.2rem;
 }
 
 .row-top {
@@ -130,13 +140,14 @@ function submit () {
 }
 
 .field span {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: #8a7b90;
   padding-left: 4px;
 }
 
 .field input,
 .field textarea {
+  font-family: inherit;
   padding: 11px 13px;
   border-radius: 14px;
   border: 1.5px solid #f0dbe8;
@@ -144,6 +155,8 @@ function submit () {
   font-size: 0.98rem;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .field input:focus {
@@ -158,66 +171,84 @@ function submit () {
 }
 
 .panel {
-  padding: 16px;
+  padding: 18px;
   border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(180, 190, 255, 0.18);
+  box-shadow: 0 8px 20px rgba(180, 190, 255, 0.2);
 }
 
 .panel-sky {
   background: linear-gradient(135deg, #eaf3ff, #fdf7ff);
+  border-top: 3px solid #a8cce8;
 }
 
 .panel-pink {
   background: linear-gradient(135deg, #ffeef5, #fff7f1);
+  border-top: 3px solid #ffb6c1;
 }
 
 .panel-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
 }
 
 .panel-head h4 {
   margin: 0;
   color: var(--cocoa);
+  font-size: 1.05rem;
 }
 
-.panel-head .avatar {
-  font-size: 1.3rem;
-  width: 36px;
-  height: 36px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
+.avatar-img {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  box-shadow: 0 4px 10px rgba(180, 190, 255, 0.25);
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(180, 190, 255, 0.3);
+  background: #fff;
+}
+
+.avatar-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-img.bear {
+  box-shadow: 0 4px 10px rgba(168, 204, 232, 0.45), inset 0 0 0 2px rgba(168, 204, 232, 0.7);
+}
+
+.avatar-img.bunny {
+  box-shadow: 0 4px 10px rgba(255, 182, 193, 0.45), inset 0 0 0 2px rgba(255, 182, 193, 0.7);
 }
 
 .lock-tag {
   margin-left: auto;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 999px;
   background: #fff3b8;
   color: #8a6a24;
-  font-size: 0.75rem;
+  font-size: 0.76rem;
 }
 
 .panel textarea {
+  font-family: inherit;
   width: 100%;
   box-sizing: border-box;
-  padding: 12px;
+  padding: 12px 14px;
   border-radius: 14px;
   border: 1.5px solid transparent;
   background: rgba(255, 255, 255, 0.9);
   font-size: 0.95rem;
-  line-height: 1.6;
+  line-height: 1.7;
   resize: vertical;
   outline: none;
   color: var(--cocoa);
   transition: border-color 0.2s;
+  min-height: 120px;
 }
 
 .panel textarea:focus {
@@ -225,8 +256,8 @@ function submit () {
 }
 
 .panel textarea:disabled {
-  color: #8a7b90;
-  background: rgba(255, 255, 255, 0.6);
+  color: #b8a8b8;
+  background: rgba(255, 255, 255, 0.5);
   cursor: not-allowed;
 }
 
@@ -234,19 +265,19 @@ function submit () {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: 14px;
   flex-wrap: wrap;
 }
 
 .mood-label {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: #7c6d84;
 }
 
 .actions {
-  margin-top: 16px;
+  margin-top: 18px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: flex-end;
 }
 
@@ -254,6 +285,6 @@ function submit () {
   .row-top { grid-template-columns: 1fr; }
   .dual-col { grid-template-columns: 1fr; }
   .actions { justify-content: stretch; }
-  .actions .btn { flex: 1; }
+  .actions .btn { flex: 1; min-height: 44px; }
 }
 </style>

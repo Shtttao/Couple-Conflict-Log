@@ -9,14 +9,14 @@ const PRESET_USERS = {
   loverA: {
     username: 'loverA',
     password: 'together4ever',
-    displayName: 'Little Bear',
+    displayName: '小熊',
     role: 'me',
     color: 'sky'
   },
   loverB: {
     username: 'loverB',
     password: 'myheartforyou',
-    displayName: 'Sweet Bunny',
+    displayName: '小兔',
     role: 'partner',
     color: 'pink'
   }
@@ -44,7 +44,7 @@ export const usersMeta = PRESET_USERS
 export function login (username, password) {
   const user = PRESET_USERS[username]
   if (!user || user.password !== password) {
-    return { ok: false, message: 'Oops… wrong username or password. This log is only for two of you ♡' }
+    return { ok: false, message: '账号或密码不对哦，这里只属于你们两个人 ♡' }
   }
   const profile = {
     username: user.username,

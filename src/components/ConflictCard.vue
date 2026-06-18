@@ -42,13 +42,20 @@ function toggleResolved () {
   emit('saved', { ...props.conflict, resolved: !props.conflict.resolved })
 }
 
+function onDelete () {
+  if (window.confirm('确定删除这条回忆吗？删除后无法恢复 ♡')) {
+    emit('delete', props.conflict.id)
+  }
+}
+
 function formattedDate (iso) {
   if (!iso) return ''
   const d = new Date(iso)
-  return d.toLocaleDateString(undefined, {
+  return d.toLocaleDateString('zh-CN', {
     month: 'short',
     day: 'numeric',
-    year: 'numeric'
+    year: 'numeric',
+    weekday: 'short'
   })
 }
 </script>
@@ -59,11 +66,7 @@ function formattedDate (iso) {
       <div class="card-head-left">
         <h4 class="card-date">{{ formattedDate(conflict.date) }}</h4>
         <div v-if="conflict.tags && conflict.tags.length" class="tag-row">
-          <span
-            v-for="tag in conflict.tags"
-            :key="tag"
-            class="tag"
-          >#{{ tag }}</span>
+          <span v-for="tag in conflict.tags" :key="tag" class="tag">#{{ tag }}</span>
         </div>
       </div>
       <div class="card-head-right">
@@ -71,7 +74,7 @@ function formattedDate (iso) {
           :class="['resolve-btn', conflict.resolved ? 'resolved' : '']"
           @click="toggleResolved"
         >
-          {{ conflict.resolved ? '💗 Reconciled' : '✓ Mark as Reconciled' }}
+          {{ conflict.resolved ? '💗 已和解' : '✓ 标记为和解' }}
         </button>
       </div>
     </div>
@@ -79,79 +82,63 @@ function formattedDate (iso) {
     <div class="dual-col">
       <section class="panel panel-sky">
         <header class="panel-head">
-          <span class="avatar">🐻</span>
-          <h4>Little Bear</h4>
-          <span v-if="!isMe && !editing" class="lock-tag small">Partner only</span>
+          <span class="avatar-img bear">
+            <img src="/images/couple-boy.png" alt="小熊" />
+          </span>
+          <h4>小熊 · loverA</h4>
+          <span v-if="!isMe && !editing" class="lock-tag small">🔒 对方区域</span>
         </header>
         <textarea
           v-if="editing && isMe"
           v-model="myText"
           rows="6"
-          placeholder="Your reflection…"
+          placeholder="写下你的反思…"
         ></textarea>
         <p v-else class="panel-text">
-          {{ conflict.myReflection || 'Not yet written.' }}
+          {{ conflict.myReflection || '还没写。' }}
         </p>
         <div class="mood-row">
-          <span class="mood-label">Mood:</span>
-          <MoodStars
-            v-if="editing && isMe"
-            v-model="myMood"
-            accent="sky"
-          />
-          <MoodStars
-            v-else
-            :model-value="conflict.myMood || 0"
-            accent="sky"
-            read-only
-            small
-          />
+          <span class="mood-label">心情:</span>
+          <MoodStars v-if="editing && isMe" v-model="myMood" accent="sky" />
+          <MoodStars v-else :model-value="conflict.myMood || 0" accent="sky" read-only small />
         </div>
       </section>
 
       <section class="panel panel-pink">
         <header class="panel-head">
-          <span class="avatar">🐰</span>
-          <h4>Sweet Bunny</h4>
-          <span v-if="isMe && !editing" class="lock-tag small">Partner only</span>
+          <span class="avatar-img bunny">
+            <img src="/images/couple-girl.png" alt="小兔" />
+          </span>
+          <h4>小兔 · loverB</h4>
+          <span v-if="isMe && !editing" class="lock-tag small">🔒 对方区域</span>
         </header>
         <textarea
           v-if="editing && !isMe"
           v-model="partnerText"
           rows="6"
-          placeholder="Your reflection…"
+          placeholder="写下你的反思…"
         ></textarea>
         <p v-else class="panel-text">
-          {{ conflict.partnerReflection || 'Not yet written.' }}
+          {{ conflict.partnerReflection || '还没写。' }}
         </p>
         <div class="mood-row">
-          <span class="mood-label">Mood:</span>
-          <MoodStars
-            v-if="editing && !isMe"
-            v-model="partnerMood"
-            accent="pink"
-          />
-          <MoodStars
-            v-else
-            :model-value="conflict.partnerMood || 0"
-            accent="pink"
-            read-only
-            small
-          />
+          <span class="mood-label">心情:</span>
+          <MoodStars v-if="editing && !isMe" v-model="partnerMood" accent="pink" />
+          <MoodStars v-else :model-value="conflict.partnerMood || 0" accent="pink" read-only small />
         </div>
       </section>
     </div>
 
     <div class="card-actions">
-      <button class="btn btn-ghost btn-danger btn-small" @click="emit('delete', conflict.id)">
-        🗑 Delete
+      <button class="btn btn-ghost btn-danger btn-small" @click="onDelete">
+        🗑 删除
       </button>
       <button v-if="!editing" class="btn btn-secondary btn-small" @click="toggleEdit">
-        ✎ Edit my side
+        ✎ 编辑我的部分
       </button>
       <template v-else>
-        <button class="btn btn-ghost btn-small" @click="toggleEdit">Cancel</button>
-        <button class="btn btn-primary btn-small" @click="save">Save my changes ♡</button>
+        <button class="btn btn-ghost btn-small" @click="toggleEdit">取消</button>
+        <button class="btn btn-primary btn-small" @click="save">保存我的修改 ♡</button>
       </template>
     </div>
   </article>
@@ -214,11 +201,11 @@ function formattedDate (iso) {
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
+  min-height: 36px;
+  font-family: inherit;
 }
 
-.resolve-btn:hover {
-  background: #ffeaf3;
-}
+.resolve-btn:hover { background: #ffeaf3; }
 
 .resolve-btn.resolved {
   background: linear-gradient(135deg, #ffd9e6, #e6d4ff);
@@ -237,8 +224,8 @@ function formattedDate (iso) {
   border-radius: 18px;
 }
 
-.panel-sky { background: linear-gradient(135deg, #eaf3ff, #fdf7ff); }
-.panel-pink { background: linear-gradient(135deg, #ffeef5, #fff7f1); }
+.panel-sky { background: linear-gradient(135deg, #eaf3ff, #fdf7ff); border-top: 2px solid #a8cce8; }
+.panel-pink { background: linear-gradient(135deg, #ffeef5, #fff7f1); border-top: 2px solid #ffb6c1; }
 
 .panel-head {
   display: flex;
@@ -253,17 +240,24 @@ function formattedDate (iso) {
   font-size: 0.95rem;
 }
 
-.panel-head .avatar {
-  font-size: 1.1rem;
-  width: 30px;
-  height: 30px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
+.avatar-img {
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  box-shadow: 0 4px 8px rgba(180, 190, 255, 0.25);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #fff;
 }
+
+.avatar-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-img.bear { box-shadow: 0 3px 8px rgba(168, 204, 232, 0.45), inset 0 0 0 1.5px rgba(168, 204, 232, 0.8); }
+.avatar-img.bunny { box-shadow: 0 3px 8px rgba(255, 182, 193, 0.45), inset 0 0 0 1.5px rgba(255, 182, 193, 0.8); }
 
 .lock-tag.small {
   margin-left: auto;
@@ -275,9 +269,10 @@ function formattedDate (iso) {
 }
 
 .panel textarea {
+  font-family: inherit;
   width: 100%;
   box-sizing: border-box;
-  padding: 10px;
+  padding: 10px 12px;
   border-radius: 12px;
   border: 1.5px solid #fff;
   background: rgba(255, 255, 255, 0.9);
@@ -286,16 +281,14 @@ function formattedDate (iso) {
   resize: vertical;
   outline: none;
   color: var(--cocoa);
-  font-family: inherit;
+  min-height: 100px;
 }
 
-.panel textarea:focus {
-  border-color: #c9b8ff;
-}
+.panel textarea:focus { border-color: #c9b8ff; }
 
 .panel-text {
   margin: 0;
-  padding: 10px;
+  padding: 10px 12px;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 12px;
   font-size: 0.92rem;
@@ -313,7 +306,7 @@ function formattedDate (iso) {
 }
 
 .mood-label {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: #7c6d84;
 }
 
@@ -327,6 +320,6 @@ function formattedDate (iso) {
 
 @media (max-width: 720px) {
   .dual-col { grid-template-columns: 1fr; }
-  .card-actions .btn { flex: 1; }
+  .card-actions .btn { flex: 1; min-height: 40px; }
 }
 </style>

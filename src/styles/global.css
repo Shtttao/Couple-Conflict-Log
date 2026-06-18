@@ -8,12 +8,24 @@
   --mint: #a6e3c9;
   --peach: #ffc9a8;
   --butter: #fff3b8;
+
+  /* 触控安全区（iPhone X+） */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  /* 触控最小点击尺寸 */
+  --touch-min: 44px;
+  --touch-pad: 12px;
 }
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 html, body, #app {
@@ -22,26 +34,47 @@ html, body, #app {
   min-height: 100%;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   font-family:
-    "Nunito", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    "PingFang SC", "Helvetica Neue", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
   font-size: 16px;
   color: var(--cocoa);
-  background: #fff5f9;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255, 200, 221, 0.45), transparent 50%),
+    radial-gradient(circle at 85% 90%, rgba(200, 225, 255, 0.4), transparent 50%),
+    linear-gradient(180deg, #fff5f9 0%, #f7f2ff 60%, #eef5ff 100%);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
+  line-height: 1.55;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior-y: contain;
+  overflow-x: hidden;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
 }
 
 a { color: var(--pink-strong); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* ========= Buttons ========= */
+/* ============================================================
+   按钮：增强触控友好
+   ============================================================ */
 .btn {
   border: none;
-  padding: 11px 20px;
+  padding: 12px 22px;
+  min-height: var(--touch-min);
   border-radius: 999px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s;
@@ -49,23 +82,32 @@ a:hover { text-decoration: underline; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
 .btn:active {
-  transform: translateY(1px);
+  transform: scale(0.96) translateY(1px);
+  opacity: 0.92;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, var(--pink-strong), var(--violet));
   color: #fff;
-  box-shadow: 0 10px 22px rgba(255, 150, 180, 0.4);
+  box-shadow: 0 10px 22px rgba(255, 150, 180, 0.35);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 14px 28px rgba(255, 150, 180, 0.5);
+  box-shadow: 0 14px 28px rgba(255, 150, 180, 0.45);
   transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+  box-shadow: 0 4px 10px rgba(255, 150, 180, 0.4);
 }
 
 .btn-secondary {
@@ -80,45 +122,112 @@ a:hover { text-decoration: underline; }
   box-shadow: 0 6px 14px rgba(180, 190, 255, 0.2);
 }
 
-.btn-ghost:hover {
-  background: #f6f0ff;
-}
-
+.btn-ghost:hover { background: #f6f0ff; }
 .btn-sky { background: linear-gradient(135deg, #eaf3ff, #ffffff); }
 .btn-pink { background: linear-gradient(135deg, #ffeef5, #ffffff); }
 .btn-danger { color: #c45d7a !important; }
 
-.btn-small { padding: 7px 14px; font-size: 0.85rem; }
+.btn-small {
+  padding: 8px 14px;
+  min-height: 36px;
+  font-size: 0.88rem;
+}
 
 .btn-block { width: 100%; }
 
-/* ========= Scrollbars (softer look) ========= */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background: #f0dbe8;
-  border-radius: 999px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* ========= Focus outline (kept soft) ========= */
+/* ============================================================
+   输入元素：移动端触控优化
+   ============================================================ */
 input[type="date"],
 input[type="text"],
 input[type="password"],
-textarea {
+input[type="email"],
+input[type="number"],
+textarea,
+select {
   font-family: inherit;
-}
-
-textarea {
-  font-family: inherit;
-}
-
-/* Selection */
-::selection {
-  background: #ffdae5;
+  font-size: 16px; /* 防止 iOS 自动放大 */
+  padding: 12px 14px;
+  min-height: var(--touch-min);
+  border-radius: 16px;
+  border: 1.5px solid #f2d7e3;
+  background: #fffafc;
   color: var(--cocoa);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--pink-strong);
+  box-shadow: 0 0 0 4px rgba(255, 182, 193, 0.25);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   滚动条（桌面端美化，移动端隐藏）
+   ============================================================ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #f0dbe8; border-radius: 999px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ============================================================
+   焦点样式（键盘无障碍访问）
+   ============================================================ */
+:focus-visible {
+  outline: 3px solid rgba(255, 127, 168, 0.5);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+::selection { background: #ffdae5; color: var(--cocoa); }
+
+/* ============================================================
+   通用卡片
+   ============================================================ */
+.card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-radius: 24px;
+  box-shadow:
+    0 20px 45px rgba(255, 182, 193, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+/* ============================================================
+   响应式断点
+   ============================================================ */
+@media (max-width: 900px) {
+  body { font-size: 15px; }
+  .btn { padding: 12px 18px; font-size: 0.95rem; }
+}
+
+@media (max-width: 720px) {
+  body { font-size: 15px; line-height: 1.6; }
+  .btn { padding: 12px 16px; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 14px; }
+  .btn { padding: 11px 16px; font-size: 0.92rem; border-radius: 999px; }
+  .card { border-radius: 18px; }
+}
+
+@media (min-width: 1400px) {
+  body { font-size: 17px; }
+}
+
+/* ============================================================
+   打印样式
+   ============================================================ */
+@media print {
+  body { background: white; color: black; }
+  .btn, .no-print { display: none !important; }
 }

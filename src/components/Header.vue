@@ -1,6 +1,5 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { usersMeta } from '../utils/auth.js'
 
 const props = defineProps({
   user: { type: Object, required: true }
@@ -19,12 +18,15 @@ function onLogout () {
   <header class="app-header">
     <div class="logo">
       <span class="logo-bubble">♡</span>
-      <span class="logo-text">Couple Conflict Log</span>
+      <span class="logo-text">情侣吵架日记</span>
     </div>
     <div class="user-chip" :class="'chip-' + user.color">
-      <span class="chip-avatar">{{ user.role === 'me' ? '🐻' : '🐰' }}</span>
+      <span class="chip-avatar">
+        <img :src="user.role === 'me' ? '/images/couple-boy.png' : '/images/couple-girl.png'"
+             :alt="user.displayName" />
+      </span>
       <span class="chip-name">{{ user.displayName }}</span>
-      <button class="chip-logout" @click="onLogout" title="Log out">✕</button>
+      <button class="chip-logout" @click="onLogout" title="退出登录">✕</button>
     </div>
   </header>
 </template>
@@ -47,29 +49,29 @@ function onLogout () {
 
 .logo-bubble {
   display: inline-flex;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   background: linear-gradient(135deg, #ffc0d3, #c3b8ff);
   color: #fff;
   box-shadow: 0 6px 14px rgba(255, 160, 190, 0.4);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 .logo-text {
   font-weight: 700;
   color: var(--cocoa);
   letter-spacing: 0.3px;
-  font-size: 1.02rem;
+  font-size: 1.05rem;
 }
 
 .user-chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 6px 6px 12px;
+  gap: 10px;
+  padding: 4px 4px 4px 12px;
   border-radius: 999px;
   background: #fff;
   box-shadow: 0 6px 16px rgba(180, 190, 255, 0.28);
@@ -77,7 +79,22 @@ function onLogout () {
 }
 
 .chip-avatar {
-  font-size: 1.1rem;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff0f6;
+}
+
+.chip-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .chip-name {
@@ -94,6 +111,10 @@ function onLogout () {
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.85rem;
+  min-width: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chip-logout:hover {
@@ -101,10 +122,15 @@ function onLogout () {
   transform: rotate(90deg);
 }
 
+.chip-logout:active {
+  transform: rotate(180deg) scale(0.92);
+}
+
 .chip-sky { background: linear-gradient(135deg, #eaf3ff, #ffffff); }
 .chip-pink { background: linear-gradient(135deg, #fff0f6, #ffffff); }
 
-@media (max-width: 480px) {
+@media (max-width: 560px) {
   .logo-text { display: none; }
+  .app-header { padding: 12px 14px; }
 }
 </style>

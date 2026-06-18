@@ -11,13 +11,6 @@ const password = ref('')
 const shake = ref(false)
 const error = ref('')
 
-const hint = computed(() => {
-  return [
-    'Pre-set account ① — username: loverA, password: together4ever',
-    'Pre-set account ② — username: loverB, password: myheartforyou'
-  ]
-})
-
 function onSubmit () {
   error.value = ''
   const result = login(username.value.trim(), password.value)
@@ -48,13 +41,13 @@ function quickFill (who) {
     <div class="login-card" :class="{ shake }">
       <div class="login-hero">
         <CoupleAvatar variant="together" size="big" />
-        <h1 class="login-title">Couple Conflict Log</h1>
-        <p class="login-sub">A warm little place for two hearts to reflect together ♡</p>
+        <h1 class="login-title">情侣吵架日记</h1>
+        <p class="login-sub">两颗心一起反思的温暖小角落 ♡</p>
       </div>
 
       <form class="login-form" @submit.prevent="onSubmit">
         <label class="field">
-          <span>Username</span>
+          <span>账号</span>
           <input
             v-model.trim="username"
             type="text"
@@ -63,36 +56,36 @@ function quickFill (who) {
           />
         </label>
         <label class="field">
-          <span>Password</span>
+          <span>密码</span>
           <input
             v-model="password"
             type="password"
-            placeholder="your little secret word"
+            placeholder="只有你们两个人知道的小秘密"
             autocomplete="current-password"
           />
         </label>
 
         <p v-if="error" class="form-error">{{ error }}</p>
 
-        <button type="submit" class="btn btn-primary btn-block">Come In 💕</button>
+        <button type="submit" class="btn btn-primary btn-block">进来吧 💕</button>
       </form>
 
       <div class="quick-login">
-        <p class="quick-title">Quick entry (only two of you here):</p>
+        <p class="quick-title">或一键登录你的角色：</p>
         <div class="quick-buttons">
           <button type="button" class="btn btn-ghost btn-sky" @click="quickFill('A')">
-            Little Bear
-            <small>loverA · together4ever</small>
+            小熊 loverA
+            <small>together4ever</small>
           </button>
           <button type="button" class="btn btn-ghost btn-pink" @click="quickFill('B')">
-            Sweet Bunny
-            <small>loverB · myheartforyou</small>
+            小兔 loverB
+            <small>myheartforyou</small>
           </button>
         </div>
       </div>
 
       <p class="privacy-note">
-        🔒 Everything you write stays only on this device. No cloud, no tracking.
+        🔒 所有内容仅保存在你的设备浏览器中。不上传、不追踪、安全私密。
       </p>
     </div>
 
@@ -110,6 +103,7 @@ function quickFill (who) {
 .login-wrap {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,10 +148,10 @@ function quickFill (who) {
 }
 
 .login-title {
-  margin: 10px 0 4px;
-  font-size: 1.6rem;
+  margin: 12px 0 4px;
+  font-size: 1.7rem;
   color: var(--cocoa);
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .login-sub {
@@ -183,21 +177,6 @@ function quickFill (who) {
   font-size: 0.88rem;
   color: #7c6d84;
   padding-left: 4px;
-}
-
-.field input {
-  padding: 12px 14px;
-  border-radius: 16px;
-  border: 1.5px solid #f2d7e3;
-  background: #fffafc;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  outline: none;
-}
-
-.field input:focus {
-  border-color: var(--pink-strong);
-  box-shadow: 0 0 0 4px rgba(255, 182, 193, 0.25);
 }
 
 .form-error {
@@ -243,6 +222,7 @@ function quickFill (who) {
   font-size: 0.78rem;
   color: #a494a8;
   margin: 14px 0 0;
+  line-height: 1.6;
 }
 
 .float-decor {
@@ -277,9 +257,10 @@ function quickFill (who) {
 
 @media (max-width: 480px) {
   .login-card {
-    padding: 22px 18px 18px;
+    padding: 22px 16px 18px;
     border-radius: 22px;
   }
-  .login-title { font-size: 1.35rem; }
+  .login-title { font-size: 1.4rem; }
+  .login-sub { font-size: 0.88rem; }
 }
 </style>
